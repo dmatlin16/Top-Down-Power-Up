@@ -1,29 +1,31 @@
 from robot import Robot
 
-redRobot = Robot(100, 100, 0, True)
+redRobot = Robot(100, 100)
 
 def setup():
     size(640, 480)
 
 def draw():
-    redRobot.display()
+    fill(255, 255, 255)
+    rect(0, 0, 640, 480)
+    redRobot.display() # Note form Michael: maybe rename to ".draw()" because it's p standard
 
 def keyPressed():
     if(key == 'w' or key == 'W'):
-        redRobot.isAccel = True
+        redRobot.is_accel = True
     elif(key == 's' or key == 'S'):
-        redRobot.isDecel = True
+        redRobot.is_decel = True
     elif(key == 'a' or key == 'A'):
-        redRobot.isTurnL = True
+        redRobot.is_turn_l = True
     elif(key == 'd' or key == 'D'):
-        redRobot.isTurnR = True
+        redRobot.is_turn_r = True
 
 def keyReleased():
     if(key == 'w' or key == 'W'):
-        redRobot.isAccel = False
+        redRobot.is_accel = False
     elif(key == 's' or key == 'S'):
-        redRobot.isDecel = False
+        redRobot.is_decel = False
     elif(key == 'a' or key == 'A'):
-        redRobot.isTurnL = False
+        redRobot.is_turn_l = False
     elif(key == 'd' or key == 'D'):
-        redRobot.isTurnR = False
+        redRobot.is_turn_r = False

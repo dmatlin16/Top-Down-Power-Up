@@ -1,12 +1,6 @@
 class Robot:
-    # Parameters
-    x = 0.0
-    y = 0.0
-    vel = 0
-    dir = 0
-    
     # Internal Usage
-    robotColor = 0x000000
+    robot_color = 0x000000
     
     # Constants
     RWIDTH = 28
@@ -16,55 +10,55 @@ class Robot:
     ANGACCEL = PI/60
     
     # States
-    isAccel = False
-    isDecel = False
-    isTurnL = False
-    isTurnR = False
+    is_accel = False
+    is_decel = False
+    is_turn_l = False
+    is_turn_r = False
     
     
-    def __init__(self, x, y, dir, isBlue):
+    def __init__(self, x = 0.0, y = 0.0, vel = 0, theta = 0, is_blue = True):
         self.x = x
         self.y = y
         self.vel = 0
-        self.dir = dir
+        self.theta = theta
         
-        if isBlue:
-            self.robotColor = 0x0191FF
+        if is_blue:
+            self.robot_color = color(1, 145, 255)
         else:
-            self.robotColor = 0xED1C24
+            self.robot_color = color(237, 28, 36)
     
-    def getCorners(self):
-        rW = self.RWIDTH
-        rH = self.RHEIGHT
-        dir = self.dir
+    def get_corners(self):
+        w = self.RWIDTH
+        h = self.RHEIGHT
+        theta = self.theta
         x = self.x
         y = self.y
-        return [[rW*cos(dir+PI/2)+rH*cos(dir)+x, rW*sin(dir+PI/2)+rH*sin(dir)+y],
-                [rW*cos(dir-PI/2)+rH*cos(dir)+x, rW*sin(dir-PI/2)+rH*sin(dir)+y],
-                [rW*cos(dir-PI/2)-rH*cos(dir)+x, rW*sin(dir-PI/2)-rH*sin(dir)+y],
-                [rW*cos(dir+PI/2)-rH*cos(dir)+x, rW*sin(dir+PI/2)-rH*sin(dir)+y]]
+        return [[w * cos(theta + PI / 2) + h * cos(theta) + x, w * sin(theta + PI / 2) + h * sin(theta) + y],
+                [w * cos(theta - PI / 2) + h * cos(theta) + x, w * sin(theta - PI / 2) + h * sin(theta) + y],
+                [w * cos(theta - PI / 2) - h * cos(theta) + x, w * sin(theta - PI / 2) - h * sin(theta) + y],
+                [w * cos(theta + PI / 2) - h * cos(theta) + x, w * sin(theta + PI / 2) - h * sin(theta) + y]]
     
     def display(self):
-        self.moveRobot()
-        
-        fill(self.robotColor)
+        fill(self.robot_color)
+        self.move_robot()
         stroke(0)
         strokeWeight(1)
         
-        C = self.getCorners()
-        quad(C[0][0], C[0][1], C[1][0], C[1][1], C[2][0], C[2][1], C[3][0], C[3][1])
+        c = self.get_corners()
+        quad(c[0][0], c[0][1], c[1][0], c[1][1], c[2][0], c[2][1], c[3][0], c[3][1])
+        ellipse(self.x + cos(self.theta) * 25, self.y + sin(self.theta) * 25, 7, 7) # Temporary circle to show which side is front
         
-    def moveRobot(self):
-        if self.isAccel:
+    def move_robot(self):
+        if self.is_accel:
             self.vel += self.ACCEL
-        if self.isDecel:
+        if self.is_decel:
             self.vel -= self.ACCEL
         self.vel *= self.DECEL
         
-        if self.isTurnR:
-            self.dir += self.ANGACCEL
-        if self.isTurnL:
-            self.dir -= self.ANGACCEL
+        if self.is_turn_r:
+            self.theta += self.ANGACCEL
+        if self.is_turn_l:
+            self.theta -= self.ANGACCEL
         
-        self.x += self.vel*cos(self.dir)
-        self.y += self.vel*sin(self.dir)
+        self.x += self.vel*cos(self.theta)
+        self.y += self.vel*sin(self.theta)
