@@ -1,34 +1,32 @@
 from robot import Robot
+from barrier import Barrier
 
 def setup():
     # REMINDER TO IMPLEMENT SCALE FACTOR IN CASE SOMEONE PLAYS ON A SCREEN LARGER OR SMALLER THAN 1080p (if wanted)
-    global field, red_robot, blue_robot
+    global field, red_robot, blue_robot, game_y, scale_factor
 
     fullScreen()
 
-    # Scales field and robots to screen size
-    robot_default_size = (99, 84)
+    # Used in scaling game
+    game_y = displayWidth * 9.0 / 16.0
     scale_factor = displayWidth / 1920.0
-    robot_scaled_size = (robot_default_size[0] * scale_factor, robot_default_size[1] * scale_factor)
-
-    red_robot = Robot(Robot.RED, 100, 200, robot_scaled_size[0], robot_scaled_size[1])
-    blue_robot = Robot(Robot.BLUE,  displayWidth - 100, displayHeight - 100, robot_scaled_size[0], robot_scaled_size[1], PI)
+    
+    red_robot = Robot(Robot.RED, 100, 100, 99, 84)
+    blue_robot = Robot(Robot.BLUE, 1820, 880, 99, 84, PI)
     field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-1920-px-wide.png")
-    print(field.height)
     field.resize(displayWidth, int(scale_factor * field.height))
 
 def draw():
-    fill(0, 0, 0)
-    rect(0, 0, displayWidth, displayHeight)
+    background(0)
     
-    # NOTE THAT THIS METHOD OF DRAWING THE FIELD IS TEMPORARY AND OPTIMALLY WILL BE DRAWN USING transform() TO CREATE A PROPER REFERENCE FRAME OF SOME SORT AND TO PREVENT HACKINESS
-    imageMode(CORNERS)
-    image(field, (displayWidth - field.width) / 2, displayHeight - field.height, (displayWidth + field.width) / 2, displayHeight)
-    imageMode(CORNER)
+    # Draw the field
+    translate(0, int((displayHeight - game_y) / 2))
+    image(field, 0, 0)
+    
+    # Scale the field
+    scale(displayWidth / 1920.0)
 
-    fill(color(255, 255, 255))
-    textSize(40)
-    text(u"Top-Down FIRST® POWER UP", 10, 10 + textAscent())
+    # Draw objects
     red_robot.draw()
     blue_robot.draw()
 
