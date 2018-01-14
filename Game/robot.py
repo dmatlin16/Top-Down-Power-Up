@@ -11,6 +11,13 @@ class Robot:
     decel = False
     turn_l = False
     turn_r = False
+    has_cube = False
+
+    # # Robot Images
+    # bumpers_blue = loadImage("../Assets/Images/Robot/bumpers_blue.png")
+    # bumpers_red = loadImage("../Assets/Images/Robot/bumpers_red.png")
+    # robot = loadImage("../Assets/Images/Robot/robot.png")
+    # robot_cube = loadImage("../Assets/Images/Robot/robot_cube.png")
 
     def __init__(self, color = RED, x = 0.0, y = 0.0, w = 99, h = 84, angle = 0, speed = 0):
         """Initiates the instance of Robot.
@@ -23,12 +30,21 @@ class Robot:
         self.speed = 0
         self.angle = angle
         self.vel = PVector(0, 0)
+        # if color == Robot.RED or color == Robot.BLUE:
+        #     self.isredblue = True
 
     def draw(self):
         """Draws the instance of Robot"""
         pushMatrix() # Save the empty transform matrix in the stack so that it can be restored for next Robot instance 
         self.move_robot()
-
+        
+        # if self.redblue:
+        #     if self.has_cube:
+        #         robotimg = Robot.robot_cube
+        #     else:
+        #         robotimg = Robot.robot
+        #     image(robotimg, self.pos.x, self.pos.y)
+        
         # Sets drawing options for instance of Robot
         fill(self.color)
         stroke(0)
