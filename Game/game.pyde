@@ -2,18 +2,21 @@ from robot import Robot
 from barrier import Barrier
 
 def setup():
-    # REMINDER TO IMPLEMENT SCALE FACTOR IN CASE SOMEONE PLAYS ON A SCREEN LARGER OR SMALLER THAN 1080p (if wanted)
-    global field, red_robot, blue_robot, game_y, scale_factor
+    global field, red_robot, blue_robot, barriers, game_y, scale_factor
 
     fullScreen()
 
     # Used in scaling game
     game_y = displayWidth * 9.0 / 16.0
-    scale_factor = displayWidth / 1920.0
+    scale_factor = displayWidth / 3840.0
     
     red_robot = Robot(Robot.RED, 100, 100, 99, 84)
     blue_robot = Robot(Robot.BLUE, 1820, 880, 99, 84, PI)
-    field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-1920-px-wide.png")
+    
+    barriers = set()
+    barriers.add(Barrier(200, 0, 200, 300))
+    
+    field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-3840x2160.png")
     field.resize(displayWidth, int(scale_factor * field.height))
 
 def draw():
@@ -27,8 +30,11 @@ def draw():
     scale(displayWidth / 1920.0)
 
     # Draw objects
-    red_robot.draw()
-    blue_robot.draw()
+    red_robot.draw(barriers)
+    blue_robot.draw(barriers)
+    
+    for barrier in barriers:
+        barrier.draw()
 
 def keyPressed():
     lowerKey = str(key).lower()

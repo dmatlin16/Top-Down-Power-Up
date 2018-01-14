@@ -1,3 +1,5 @@
+from barrier import Barrier
+
 class Robot:
     # Constants
     ACCEL = 0.30
@@ -24,13 +26,18 @@ class Robot:
         self.speed = 0
         self.angle = angle
 
-    def draw(self):
+    def draw(self, barriers):
         """Draws the instance of Robot"""
         pushMatrix() # Save the empty transform matrix in the stack so that it can be restored for next Robot instance 
         self.move_robot()
 
         # Sets drawing options for instance of Robot
-        fill(self.color)
+        for barrier in barriers:
+            if self.is_colliding(barrier):
+                print("boom")
+                fill(color(255, 255, 0))
+            else:
+                fill(self.color)
         stroke(0)
         strokeWeight(2)
 

@@ -6,17 +6,17 @@ class Barrier:
         self.y2 = y2
     
     def draw(self):
-        line(x1, y1, x2, y2)
+        line(self.x1, self.y1, self.x2, self.y2)
     
     def is_colliding(self, barrier):
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
-        barrier.x1 = x3
-        barrier.y1 = y3
-        barrier.x2 = x4
-        barrier.y2 = y4
+        x1 = self.x1
+        y1 = self.y1
+        x2 = self.x2
+        y2 = self.y2
+        x3 = barrier.x1
+        y3 = barrier.y1
+        x4 = barrier.x2
+        y4 = barrier.y2
         
         # Avoid division by 0
         if x1 == x2:
