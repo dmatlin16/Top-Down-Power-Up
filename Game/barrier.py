@@ -20,9 +20,9 @@ class Barrier:
         
         # Avoid division by 0
         if x1 == x2:
-            x2 += 0.01
+            x2 += 0.0001
         if x3 == x4:
-            x4 += 0.01
+            x4 += 0.0001
         
         # Get equations of both lines (y = mx + b), m is slope, b is y-intercept
         m1 = (y2 - y1) / (x2 - x1)

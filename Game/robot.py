@@ -32,14 +32,18 @@ class Robot:
         self.move_robot()
 
         # Sets drawing options for instance of Robot
-        for barrier in barriers:
-            if self.is_colliding(barrier):
-                print("boom")
-                fill(color(255, 255, 0))
-            else:
-                fill(self.color)
+        fill(self.color)
         stroke(0)
         strokeWeight(2)
+        
+        # Collision detection
+        for barrier in barriers:
+            if self.is_colliding(barrier):
+                normal_angle = self.get_normal_angle(barrier)
+            while self.is_colliding(barrier):
+                self.speed *= self.FRICTION
+                self.x += cos(normal_angle)
+                self.y += sin(normal_angle)
 
         # Puts draw functions (e.g., rect(), ellipse()) into robot's reference frame to make drawing easier
         translate(self.x, self.y)
@@ -96,3 +100,28 @@ class Robot:
             if robot_edge.is_colliding(barrier):
                 return True
         return False
+    
+    def get_normal_angle(self, barrier):
+        x = self.x
+        y = self.y
+        x1 = barrier.x1
+        y1 = barrier.y1
+        x2 = barrier.x2
+        y2 = barrier.y2
+        
+        # Avoid division by 0
+        if x1 == x2:
+            x2 += 0.0001
+
+        # Get equations of barrier lines (y = mx + b), m is slope, b is y-intercept
+        m = (y2 - y1) / (x2 - x1)
+        b = y1 - m*x1
+        
+        # Positive if point is above the line, negative if point is below the line
+        up_or_down = m*x - y + b
+        # Positive if point is to the left of the line, negative if point is to the right of the line
+        left_or_right = up_or_down * m
+        
+        if left_or_right > 0:
+            return atan(m) - PI/2 
+        return atan(m) + PI/2
