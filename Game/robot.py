@@ -120,7 +120,10 @@ class Robot:
         # Positive if point is above the line, negative if point is below the line
         up_or_down = m*x - y + b
         # Positive if point is to the left of the line, negative if point is to the right of the line
-        left_or_right = up_or_down * m
+        if m == 0:
+            left_or_right = up_or_down
+        else:
+            left_or_right = up_or_down * m
         
         if left_or_right > 0:
             return atan(m) - PI/2 

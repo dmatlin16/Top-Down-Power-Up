@@ -15,6 +15,7 @@ def setup():
     
     barriers = set()
     barriers.add(Barrier(200, 0, 200, 300))
+    barriers.add(Barrier(300, 200, 0, 200))
     
     field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-3840x2160.png")
     field.resize(displayWidth, int(scale_factor * field.height))
