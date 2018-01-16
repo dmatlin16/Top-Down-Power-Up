@@ -1,8 +1,10 @@
+from barrier import Barrier
+
 class Robot:
     # Constants
     ACCEL = 0.30
     FRICTION = 0.95
-    ANGACCEL = PI / 60
+    ANGACCEL = PI/60
     RED = color(237, 28, 36)
     BLUE = color(1, 145, 255)
 
@@ -23,18 +25,17 @@ class Robot:
         """Initiates the instance of Robot.
         Will create a red robot at [0, 0] with a width of 99 and a height of 84 that is unmoving
         and facing right unless otherwise specified"""
+        self.x = x
+        self.y = y
         self.color = color
         self.w = w
         self.h = h
         self.speed = 0
         self.angle = angle
-<<<<<<< HEAD
-        self.vel = PVector(0, 0)
         # if color == Robot.RED or color == Robot.BLUE:
         #     self.isredblue = True
-=======
->>>>>>> collisions
 
+    def draw(self, barriers):
         """Draws the instance of Robot"""
         pushMatrix() # Save the empty transform matrix in the stack so that it can be restored for next Robot instance 
         self.move_robot()
@@ -50,6 +51,15 @@ class Robot:
         fill(self.color)
         stroke(0)
         strokeWeight(2)
+        
+        # Collision detection
+        for barrier in barriers:
+            if self.is_colliding(barrier):
+                normal_angle = self.get_normal_angle(barrier)
+            while self.is_colliding(barrier):
+                self.speed *= self.FRICTION
+                self.x += cos(normal_angle)
+                self.y += sin(normal_angle)
 
         # Puts draw functions (e.g., rect(), ellipse()) into robot's reference frame to make drawing easier
         translate(self.x, self.y)
