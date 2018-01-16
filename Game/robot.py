@@ -84,8 +84,7 @@ class Robot:
         
         self.x += self.speed * cos(self.angle)
         self.y += self.speed * sin(self.angle)
-    
-    # Returns corners of robot as list of tuples: [(x1, y1), (x2, y2), (x3, y3), (x4, y4)]
+
     def get_corners(self):
         """Returns corners of robot as a list of 4 tuples"""
         w = self.w    
@@ -129,18 +128,18 @@ class Robot:
         if x1 == x2:
             x2 += 0.0001
 
-        # Get equations of barrier lines (y = mx + b), m is slope, b is y-intercept
+        # Get equations of barrier line (y = mx + b), m is slope, b is y-intercept
         m = (y2 - y1) / (x2 - x1)
         b = y1 - m*x1
         
-        # Positive if point is above the line, negative if point is below the line
-        up_or_down = m*x - y + b
-        # Positive if point is to the left of the line, negative if point is to the right of the line
-        if m == 0:
-            left_or_right = up_or_down
-        else:
-            left_or_right = up_or_down * m
+        # Y-distance from the point to the line
+        y_distance = m*x + b - y
         
-        if left_or_right > 0:
-            return atan(m) - PI/2 
-        return atan(m) + PI/2
+        # If the y-distance and slope share the same sign, then the point is clockwise from the line with respect to Point 1 
+        if (y_distance >= 0 and m >= 0) or (y_distance < 0 and m < 0):
+            # Return the barrier's angle minus 90 degrees
+            return atan(m) - PI/2
+        # Otherwise, the point is counterclockwise from the line with respect to Point 1
+        else:
+            # Return the barrier's angle plus 90 degrees
+            return atan(m) + PI/2

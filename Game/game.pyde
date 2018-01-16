@@ -35,7 +35,7 @@ def draw():
     # Draw objects
     red_robot.draw(barriers)
     blue_robot.draw(barriers)
-    cube.draw()
+    #cube.draw()
     
     for barrier in barriers:
         barrier.draw()
