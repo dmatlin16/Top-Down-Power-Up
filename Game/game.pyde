@@ -1,8 +1,9 @@
 from robot import Robot
 from barrier import Barrier
+from cube import Cube
 
 def setup():
-    global field, red_robot, blue_robot, barriers, game_y, scale_factor
+    global field, red_robot, blue_robot, barriers, game_y, scale_factor, cube
 
     fullScreen()
 
@@ -12,6 +13,7 @@ def setup():
     
     red_robot = Robot(Robot.RED, 100, 100, 99, 84)
     blue_robot = Robot(Robot.BLUE, 1820, 880, 99, 84, PI)
+    cube = Cube()
     
     barriers = set()
     barriers.add(Barrier(200, 0, 200, 300))
@@ -33,6 +35,7 @@ def draw():
     # Draw objects
     red_robot.draw(barriers)
     blue_robot.draw(barriers)
+    cube.draw()
     
     for barrier in barriers:
         barrier.draw()
