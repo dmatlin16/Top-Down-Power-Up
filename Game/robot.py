@@ -35,7 +35,7 @@ class Robot:
         # if color == Robot.RED or color == Robot.BLUE:
         #     self.isredblue = True
 
-    def draw(self, barriers):
+    def draw(self, barriers, robots):
         """Draws the instance of Robot"""
         pushMatrix() # Save the empty transform matrix in the stack so that it can be restored for next Robot instance 
         self.move_robot()
@@ -56,10 +56,21 @@ class Robot:
         for barrier in barriers:
             if self.is_colliding(barrier):
                 normal_angle = self.get_normal_angle(barrier)
+                print(normal_angle)
             while self.is_colliding(barrier):
                 self.speed *= self.FRICTION
                 self.x += cos(normal_angle)
                 self.y += sin(normal_angle)
+
+        for robot in robots:
+            if not robot is self:
+                for edge in robot.get_lines():
+                    if self.is_colliding(edge):
+                        normal_angle = self.get_normal_angle(edge)
+                    while self.is_colliding(edge):
+                        self.speed *= self.FRICTION
+                        self.x += cos(normal_angle)
+                        self.y += sin(normal_angle)
 
         # Puts draw functions (e.g., rect(), ellipse()) into robot's reference frame to make drawing easier
         translate(self.x, self.y)
@@ -109,6 +120,7 @@ class Robot:
                 Barrier(c[1][0], c[1][1], c[2][0], c[2][1]),
                 Barrier(c[2][0], c[2][1], c[3][0], c[3][1]),
                 Barrier(c[3][0], c[3][1], c[0][0], c[0][1])]
+
     
     def is_colliding(self, barrier):
         for robot_edge in self.get_lines():

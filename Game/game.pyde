@@ -3,7 +3,7 @@ from barrier import Barrier
 from cube import Cube
 
 def setup():
-    global field, red_robot, blue_robot, barriers, game_y, scale_factor, cube
+    global field, red_robot, blue_robot, barriers, robots, game_y, scale_factor, cube
 
     fullScreen()
 
@@ -18,6 +18,10 @@ def setup():
     barriers = set()
     barriers.add(Barrier(200, 0, 200, 300))
     barriers.add(Barrier(300, 200, 0, 200))
+
+    robots = set()
+    robots.add(red_robot)
+    robots.add(blue_robot)
     
     field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-3840x2160.png")
     field.resize(displayWidth, int(scale_factor * field.height))
@@ -33,8 +37,8 @@ def draw():
     scale(displayWidth / 1920.0)
 
     # Draw objects
-    red_robot.draw(barriers)
-    blue_robot.draw(barriers)
+    for robot in robots:
+        robot.draw(barriers, robots)
     #cube.draw()
     
     for barrier in barriers:
