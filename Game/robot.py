@@ -146,8 +146,8 @@ class Robot:
         # Y-distance from the point to the line
         y_distance = m*x + b - y
         
-        # If the y-distance and slope share the same sign, then the point is clockwise from the line with respect to Point 1 
-        if (y_distance >= 0 and m >= 0) or (y_distance < 0 and m < 0):
+        # If y-distance is positive, then the point is clockwise from the line with respect to Point 1 
+        if y_distance >= 0:
             # Return the barrier's angle minus 90 degrees
             return atan(m) - PI/2
         # Otherwise, the point is counterclockwise from the line with respect to Point 1
