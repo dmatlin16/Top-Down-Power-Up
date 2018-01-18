@@ -56,7 +56,6 @@ class Robot:
         for barrier in barriers:
             if self.is_colliding(barrier):
                 normal_angle = self.get_normal_angle(barrier)
-                print(normal_angle)
             while self.is_colliding(barrier):
                 self.speed *= self.FRICTION
                 self.x += cos(normal_angle)

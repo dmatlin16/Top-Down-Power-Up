@@ -16,8 +16,21 @@ def setup():
     cube = Cube()
     
     barriers = set()
-    barriers.add(Barrier(200, 0, 200, 300))
-    barriers.add(Barrier(300, 200, 0, 200))
+    #barriers.add(Barrier(200, 0, 200, 300))
+    #barriers.add(Barrier(300, 200, 0, 200))
+    def __init__(self, x1, y1, angle):
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x1 + 50*cos(angle)
+        self.y2 = y1 + 50*cos(angle)
+    
+    for i in range(12):
+        x1 = 150*i
+        y1 = 600
+        angle = i*PI/6
+        x2 = x1 + 100*cos(angle)
+        y2 = y1 + 100*sin(angle)
+        barriers.add(Barrier(x1, y1, x2, y2))
 
     robots = set()
     robots.add(red_robot)
