@@ -20,8 +20,11 @@ def setup():
     barriers.add(BarrierLine(1920, 0, 1920, 953))
     barriers.add(BarrierLine(1920, 953, 0, 953))
     barriers.add(BarrierLine(0, 953, 0, 0))
-    barriers.add(BarrierLine(101, 0, 0, 84))
-    barriers.add(BarrierCircle(100, 100, 5, True))
+    barriers.add(BarrierLine(0, 86, 104, 0))
+    barriers.add(BarrierLine(1816, 0, 1920, 86))
+    barriers.add(BarrierLine(0, 867, 104, 953))
+    barriers.add(BarrierLine(1816, 953, 1920, 867))
+    barriers.add(BarrierCircle(200, 200, 3, True))
 
     robots = set()
     robots.add(red_robot)

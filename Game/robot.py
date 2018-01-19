@@ -54,17 +54,22 @@ class Robot:
         
         # Collision detection
         for barrier in barriers:
-            if self.is_colliding(barrier) and isinstance(barrier, BarrierLine):
-                normal_angle = self.get_normal_angle(barrier)
-                while self.is_colliding(barrier):
+            edge_num = self.is_colliding(barrier)
+            if edge_num >= 0:
+                if isinstance(barrier, BarrierLine):
+                    normal_angle = self.get_normal_angle(self.x, self.y, barrier)
+                else:
+                    normal_angle = self.get_normal_angle(barrier.x, barrier.y, self.get_lines()[edge_num]) + PI
+                while self.is_colliding(barrier) >= 0:
                     self.speed *= self.FRICTION
                     self.x += cos(normal_angle)
                     self.y += sin(normal_angle)
 
         for robot in robots:
             if not robot is self:
+                # Num is odd for side edges of the robot
                 for edge in robot.get_lines():
-                    if self.is_colliding(edge):
+                    if self.is_colliding(edge) >= 0:
                         normal_angle = self.get_normal_angle(edge)
                         while self.is_colliding(edge):
                             self.speed *= self.FRICTION
@@ -124,14 +129,13 @@ class Robot:
 
     
     def is_colliding(self, barrier):
-        for robot_edge in self.get_lines():
+        """Returns -1 if robot is not in a collision, otherwise returns the number of the colliding robot edge"""
+        for num, robot_edge in enumerate(self.get_lines()):
             if robot_edge.is_colliding(barrier):
-                return True
-        return False
+                return num
+        return -1
     
-    def get_normal_angle(self, barrier):
-        x = self.x
-        y = self.y
+    def get_normal_angle(self, x, y, barrier):
         x1 = barrier.x1
         y1 = barrier.y1
         x2 = barrier.x2
