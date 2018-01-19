@@ -1,4 +1,4 @@
-from barrier import Barrier
+from barrier import BarrierLine, BarrierCircle
 
 class Robot:
     # Constants
@@ -54,30 +54,30 @@ class Robot:
         
         # Collision detection
         for barrier in barriers:
-            if self.is_colliding(barrier):
+            if self.is_colliding(barrier) and isinstance(barrier, BarrierLine):
                 normal_angle = self.get_normal_angle(barrier)
-            while self.is_colliding(barrier):
-                self.speed *= self.FRICTION
-                self.x += cos(normal_angle)
-                self.y += sin(normal_angle)
+                while self.is_colliding(barrier):
+                    self.speed *= self.FRICTION
+                    self.x += cos(normal_angle)
+                    self.y += sin(normal_angle)
 
         for robot in robots:
             if not robot is self:
                 for edge in robot.get_lines():
                     if self.is_colliding(edge):
                         normal_angle = self.get_normal_angle(edge)
-                    while self.is_colliding(edge):
-                        self.speed *= self.FRICTION
-                        self.x += cos(normal_angle) / 2
-                        self.y += sin(normal_angle) / 2
-                        robot.x -= cos(normal_angle) / 2
-                        robot.y -= sin(normal_angle) / 2
+                        while self.is_colliding(edge):
+                            self.speed *= self.FRICTION
+                            self.x += cos(normal_angle) / 2
+                            self.y += sin(normal_angle) / 2
+                            robot.x -= cos(normal_angle) / 2
+                            robot.y -= sin(normal_angle) / 2
 
         # Puts draw functions (e.g., rect(), ellipse()) into robot's reference frame to make drawing easier
         translate(self.x, self.y)
         rotate(self.angle)
         
-        rect(-self.w/2, -self.h/2, self.w, self.h, 3)
+        rect(-self.w / 2, -self.h / 2, self.w, self.h, 3)
         ellipse(25, 0, 11, 11)
 
         popMatrix() # Restores reference frame to empty transform matrix by popping modified matrix off the stack
@@ -117,10 +117,10 @@ class Robot:
     def get_lines(self):
         """Returns edges of robot as a list of 4 barriers"""
         c = self.get_corners()
-        return [Barrier(c[0][0], c[0][1], c[1][0], c[1][1]),
-                Barrier(c[1][0], c[1][1], c[2][0], c[2][1]),
-                Barrier(c[2][0], c[2][1], c[3][0], c[3][1]),
-                Barrier(c[3][0], c[3][1], c[0][0], c[0][1])]
+        return [BarrierLine(c[0][0], c[0][1], c[1][0], c[1][1]),
+                BarrierLine(c[1][0], c[1][1], c[2][0], c[2][1]),
+                BarrierLine(c[2][0], c[2][1], c[3][0], c[3][1]),
+                BarrierLine(c[3][0], c[3][1], c[0][0], c[0][1])]
 
     
     def is_colliding(self, barrier):
@@ -143,16 +143,16 @@ class Robot:
 
         # Get equations of barrier line (y = mx + b), m is slope, b is y-intercept
         m = (y2 - y1) / (x2 - x1)
-        b = y1 - m*x1
+        b = y1 - m * x1
         
         # Y-distance from the point to the line
-        y_distance = m*x + b - y
+        y_distance = m * x + b - y
         
         # If y-distance is positive, then the point is clockwise from the line with respect to Point 1 
         if y_distance >= 0:
             # Return the barrier's angle minus 90 degrees
-            return atan(m) - PI/2
+            return atan(m) - PI / 2
         # Otherwise, the point is counterclockwise from the line with respect to Point 1
         else:
             # Return the barrier's angle plus 90 degrees
-            return atan(m) + PI/2
+            return atan(m) + PI / 2

@@ -1,22 +1,26 @@
-class Barrier:
-    def __init__(self, x1, y1, x2, y2):
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
+class BarrierLine:
+    def __init__(self, x1, y1, x2, y2, visible = False):
+        self.x1 = float(x1)
+        self.y1 = float(y1)
+        self.x2 = float(x2)
+        self.y2 = float(y2)
+        self.visible = visible
     
     def draw(self):
-        line(self.x1, self.y1, self.x2, self.y2)
+        if self.visible:
+            line(self.x1, self.y1, self.x2, self.y2)
+            
     
     def is_colliding(self, barrier):
         x1 = self.x1
         y1 = self.y1
         x2 = self.x2
         y2 = self.y2
-        x3 = barrier.x1
-        y3 = barrier.y1
-        x4 = barrier.x2
-        y4 = barrier.y2
+        if isinstance(barrier, BarrierLine):
+            x3 = barrier.x1
+            y3 = barrier.y1
+            x4 = barrier.x2
+            y4 = barrier.y2
         
         # Avoid division by 0
         if x1 == x2:
@@ -44,3 +48,12 @@ class Barrier:
         onL2x = (x3 <= xInt and xInt <= x4) or (x3 >= xInt and xInt >= x4)
         onL2y = (y3 <= yInt and yInt <= y4) or (y3 >= yInt and yInt >= y4)
         return onL1x and onL1y and onL2x and onL2y
+
+class BarrierCircle:
+    def __init__(self, x, y, r, visible = False):
+        self.x = x
+        self.y = y
+        self.r = r
+    def draw(self):
+        if self.visible:
+            ellipse(self.x - self.r, self.y - self.r, 2 * self.r, 2 * self.r)        

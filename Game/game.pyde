@@ -1,5 +1,5 @@
 from robot import Robot
-from barrier import Barrier
+from barrier import BarrierLine, BarrierCircle
 from cube import Cube
 
 def setup():
@@ -16,10 +16,12 @@ def setup():
     cube = Cube()
     
     barriers = set()
-    barriers.add(Barrier(0, 0, 1920, 0))
-    barriers.add(Barrier(1920, 0, 1920, 953))
-    barriers.add(Barrier(1920, 953, 0, 953))
-    barriers.add(Barrier(0, 953, 0, 0))
+    barriers.add(BarrierLine(0, 0, 1920, 0))
+    barriers.add(BarrierLine(1920, 0, 1920, 953))
+    barriers.add(BarrierLine(1920, 953, 0, 953))
+    barriers.add(BarrierLine(0, 953, 0, 0))
+    barriers.add(BarrierLine(101, 0, 0, 84))
+    barriers.add(BarrierCircle(100, 100, 5, True))
 
     robots = set()
     robots.add(red_robot)
