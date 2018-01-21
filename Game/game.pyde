@@ -7,14 +7,17 @@ def setup():
 
     fullScreen()
 
+    textSize(50)
+    text("TOP-DOWN FIRST POWER UP", 500, 500)
+
     # Used in scaling game
     game_y = displayWidth * 9.0 / 16.0
     scale_factor = displayWidth / 3840.0
-    
+
     red_robot = Robot(Robot.RED, 100, 100, 99, 84)
     blue_robot = Robot(Robot.BLUE, 1820, 880, 99, 84, PI)
     cube = Cube()
-    
+
     barriers = set()
     barriers.add(BarrierLine(0, 0, 1920, 0))
     barriers.add(BarrierLine(1920, 0, 1920, 953))
@@ -29,9 +32,29 @@ def setup():
     robots = set()
     robots.add(red_robot)
     robots.add(blue_robot)
-    
+
     field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-3840x2160.png")
     field.resize(displayWidth, int(scale_factor * field.height))
+    image(field, 0, 0)
+
+    switch_img_path = "../Assets/Images/Field/Switch Variants"
+    switch_imgs = {"balanced-left" : loadImage(switch_img_path + "/balanced-left.png"),
+                   "balanced-right" : loadImage(switch_img_path + "/balanced-right.png"),
+                   "bottom-tilt-1-left" : loadImage(switch_img_path + "/bottom-tilt-1-left.png"),
+                   "bottom-tilt-1-right" : loadImage(switch_img_path + "/bottom-tilt-1-right.png"),
+                   "bottom-tilt-2-left" : loadImage(switch_img_path + "/bottom-tilt-2-left.png"),
+                   "bottom-tilt-2-right" : loadImage(switch_img_path + "/bottom-tilt-2-right.png"),
+                   "top-tilt-1-left" : loadImage(switch_img_path + "/top-tilt-1-left.png"),
+                   "top-tilt-1-right" : loadImage(switch_img_path + "/top-tilt-1-right.png"),
+                   "top-tilt-2-left" : loadImage(switch_img_path + "/top-tilt-2-left.png"),
+                   "top-tilt-2-right" : loadImage(switch_img_path + "/top-tilt-2-right.png"),
+                   "lights-blue-top-left" : loadImage(switch_img_path + "/lights-blue-top-left.png"),
+                   "lights-blue-top-right" : loadImage(switch_img_path + "/lights-blue-top-right.png"),
+                   "lights-red-top-left" : loadImage(switch_img_path + "/lights-red-top-left.png"),
+                   "lights-red-top-right" : loadImage(switch_img_path + "/lights-red-top-right.png")}
+
+    for img in switch_imgs:
+        switch_imgs[img].resize(displayWidth, int(scale_factor * field.height))
 
 def draw():
     background(0)
