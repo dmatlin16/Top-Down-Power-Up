@@ -72,6 +72,10 @@ def keyPressed():
         red_robot.intake(cubes)
     elif lowerKey == 'u':
         blue_robot.intake(cubes)
+    elif lowerKey == 'e':
+        red_robot.elevator()
+    elif lowerKey == 'o':
+        blue_robot.elevator()
 
 def keyReleased():
     lowerKey = str(key).lower()
