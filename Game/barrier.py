@@ -44,3 +44,6 @@ class Barrier:
         onL2x = (x3 <= xInt and xInt <= x4) or (x3 >= xInt and xInt >= x4)
         onL2y = (y3 <= yInt and yInt <= y4) or (y3 >= yInt and yInt >= y4)
         return onL1x and onL1y and onL2x and onL2y
+    
+    def get_mid(self):
+        return ((self.x1 + self.x2)/2, (self.y1 + self.y2)/2)

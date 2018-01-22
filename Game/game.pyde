@@ -3,17 +3,16 @@ from barrier import Barrier
 from cube import Cube
 
 def setup():
-    global field, red_robot, blue_robot, barriers, robots, game_y, scale_factor, cube
+    global field, red_robot, blue_robot, barriers, robots, game_y, scale_factor, cube1, cubes
 
     fullScreen()
 
     # Used in scaling game
     game_y = displayWidth * 9.0 / 16.0
-    scale_factor = displayWidth / 3840.0
+    scale_factor = displayWidth / 1920.0
     
-    red_robot = Robot(Robot.RED, 100, 100, 99, 84)
+    red_robot = Robot(x=100, y=100)
     blue_robot = Robot(Robot.BLUE, 1820, 880, 99, 84, PI)
-    cube = Cube()
     
     barriers = set()
     barriers.add(Barrier(0, 0, 1920, 0))
@@ -25,8 +24,12 @@ def setup():
     robots.add(red_robot)
     robots.add(blue_robot)
     
+    cube1 = Cube()
+    cubes = set()
+    cubes.add(cube1)
+    
     field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-3840x2160.png")
-    field.resize(displayWidth, int(scale_factor * field.height))
+    field.resize(displayWidth, int(displayWidth / 3840.0 * field.height))
 
 def draw():
     background(0)
@@ -36,12 +39,13 @@ def draw():
     image(field, 0, 0)
     
     # Scale the field
-    scale(displayWidth / 1920.0)
+    scale(scale_factor)
 
     # Draw objects
     for robot in robots:
         robot.draw(barriers, robots)
-    #cube.draw()
+    for cube in cubes:
+        cube.draw()
     
     for barrier in barriers:
         barrier.draw()
@@ -64,6 +68,10 @@ def keyPressed():
         blue_robot.turn_l = True
     elif lowerKey == 'l':
         blue_robot.turn_r = True
+    elif lowerKey == 'q':
+        red_robot.intake(cubes)
+    elif lowerKey == 'u':
+        blue_robot.intake(cubes)
 
 def keyReleased():
     lowerKey = str(key).lower()

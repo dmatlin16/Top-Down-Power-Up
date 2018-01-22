@@ -1,4 +1,5 @@
 from barrier import Barrier
+from cube import Cube
 
 class Robot:
     # Constants
@@ -13,17 +14,10 @@ class Robot:
     decel = False
     turn_l = False
     turn_r = False
-    has_cube = False
 
-    # # Robot Images
-    # bumpers_blue = loadImage("../Assets/Images/Robot/bumpers_blue.png")
-    # bumpers_red = loadImage("../Assets/Images/Robot/bumpers_red.png")
-    # robot = loadImage("../Assets/Images/Robot/robot.png")
-    # robot_cube = loadImage("../Assets/Images/Robot/robot_cube.png")
-
-    def __init__(self, color = RED, x = 0.0, y = 0.0, w = 99, h = 84, angle = 0, speed = 0):
+    def __init__(self, color = RED, x = 0.0, y = 0.0, w = 98, h = 83, angle = 0, speed = 0):
         """Initiates the instance of Robot.
-        Will create a red robot at [0, 0] with a width of 99 and a height of 84 that is unmoving
+        Will create a red robot at [0, 0] with a width of 33 inches and a height of 28 inches (max robot dimensions) that is unmoving
         and facing right unless otherwise specified"""
         self.x = x
         self.y = y
@@ -32,22 +26,13 @@ class Robot:
         self.h = h
         self.speed = 0
         self.angle = angle
-        # if color == Robot.RED or color == Robot.BLUE:
-        #     self.isredblue = True
-
+        self.has_cube = False
+        
     def draw(self, barriers, robots):
         """Draws the instance of Robot"""
         pushMatrix() # Save the empty transform matrix in the stack so that it can be restored for next Robot instance 
         self.move_robot()
-        
-        # if self.redblue:
-        #     if self.has_cube:
-        #         robotimg = Robot.robot_cube
-        #     else:
-        #         robotimg = Robot.robot
-        #     image(robotimg, self.pos.x, self.pos.y)
-        
-        # Sets drawing options for instance of Robot
+
         fill(self.color)
         stroke(0)
         strokeWeight(2)
@@ -108,9 +93,9 @@ class Robot:
         cos_a = cos(self.angle)
         
         dx1 = (w/2) * cos_a - (h/2) * sin_a
-        dy1 = (w/2) * sin_a + (h/2) * cos_a 
-        dx2 = (w/2) * cos_a + (h/2) * sin_a 
-        dy2 = (w/2) * sin_a - (h/2) * cos_a 
+        dy1 = (w/2) * sin_a + (h/2) * cos_a
+        dx2 = (w/2) * cos_a + (h/2) * sin_a
+        dy2 = (w/2) * sin_a - (h/2) * cos_a
         
         return [(x + dx1, y + dy1), (x + dx2, y + dy2), (x - dx1, y - dy1), (x - dx2, y - dy2)]
     
@@ -121,13 +106,10 @@ class Robot:
                 Barrier(c[1][0], c[1][1], c[2][0], c[2][1]),
                 Barrier(c[2][0], c[2][1], c[3][0], c[3][1]),
                 Barrier(c[3][0], c[3][1], c[0][0], c[0][1])]
-
     
     def is_colliding(self, barrier):
         for robot_edge in self.get_lines():
-            if robot_edge.is_colliding(barrier):
-                return True
-        return False
+            return robot_edge.is_colliding(barrier)
     
     def get_normal_angle(self, barrier):
         x = self.x
@@ -156,3 +138,24 @@ class Robot:
         else:
             # Return the barrier's angle plus 90 degrees
             return atan(m) + PI/2
+    
+    def intake_colliding(self, barrier):
+        intake_edge = self.get_intake()
+        return intake_edge.is_colliding(barrier)
+    
+    def get_intake(self):
+        c = self.get_corners()
+        return Barrier(c[0][0], c[0][1], c[1][0], c[1][1])
+    
+    def intake(self, cubes):
+        if not self.has_cube:
+            for cube in cubes:
+                for edge in cube.get_lines():
+                    if self.intake_colliding(edge):
+                        cube.x = 1000000
+                        cube.y = 1000000
+                        self.has_cube = True
+        elif self.has_cube:
+            intake_edge = self.get_intake()
+            cubes.add(Cube(intake_edge.get_mid()[0] + 39 / 2 * cos(self.angle), intake_edge.get_mid()[1] + 39 / 2* sin(self.angle), angle = self.angle, speed = self.speed))
+            self.has_cube = False
