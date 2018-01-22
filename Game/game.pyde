@@ -5,10 +5,11 @@ from cube import Cube
 def setup():
     global field, red_robot, blue_robot, barriers, robots, game_y, scale_factor, cube
 
-    fullScreen()
-
+    background(0)
     textSize(50)
-    text("TOP-DOWN FIRST POWER UP", 500, 500)
+    textAlign(CENTER, CENTER)
+    text("TOP-DOWN FIRST POWER UP\nLoading assets", displayWidth // 2, displayHeight // 2)
+    fullScreen()
 
     # Used in scaling game
     game_y = displayWidth * 9.0 / 16.0
@@ -69,8 +70,6 @@ def setup():
         scale_imgs[img].resize(displayWidth, int(scale_factor * field.height))
 
 def draw():
-    background(0)
-    
     # Draw the field
     translate(0, int((displayHeight - game_y) / 2))
     image(field, 0, 0)
