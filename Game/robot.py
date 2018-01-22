@@ -27,13 +27,13 @@ class Robot:
         self.has_cube = False
         self.raise = False
         self.lower = False
-        self.cube_height = 0
+        self.intake_height = 0
         
     def draw(self, barriers, robots):
         """Draws the instance of Robot"""
         pushMatrix() # Save the empty transform matrix in the stack so that it can be restored for next Robot instance 
         self.move_robot()
-        self.raise_cube()
+        self.raise_intake()
 
         fill(self.color)
         stroke(0)
@@ -70,7 +70,7 @@ class Robot:
             fill(Cube.COLOR)
         else:
             fill(self.color)
-        rect(20, 0, 39 + self.cube_height / 10, 39 + self.cube_height / 10)
+        rect(20, 0, 39 + self.intake_height / 10, 39 + self.intake_height / 10)
         rectMode(CORNER)
 
         popMatrix() # Restores reference frame to empty transform matrix by popping modified matrix off the stack
@@ -87,8 +87,8 @@ class Robot:
         if self.turn_l:
             self.angle -= self.ANGACCEL
         
-        self.x += self.speed * cos(self.angle)
-        self.y += self.speed * sin(self.angle)
+        self.x += self.speed * cos(self.angle) * (1 - 0.005 * self.intake_height)
+        self.y += self.speed * sin(self.angle) * (1 - 0.005 * self.intake_height)
 
     def get_corners(self):
         """Returns corners of robot as a list of 4 tuples"""
@@ -156,7 +156,7 @@ class Robot:
         return Barrier(c[0][0], c[0][1], c[1][0], c[1][1])
     
     def intake(self, cubes):
-        if not self.has_cube and self.cube_height == 0:
+        if not self.has_cube and self.intake_height == 0:
             for cube in cubes:
                 for edge in cube.get_lines():
                     if self.intake_colliding(edge):
@@ -175,8 +175,8 @@ class Robot:
         else:
             self.raise = True
     
-    def raise_cube(self):
-        if self.raise and self.cube_height < 100:
-            self.cube_height += 1
-        elif not self.raise and self.cube_height > 0:
-            self.cube_height -= 1
+    def raise_intake(self):
+        if self.raise and self.intake_height < 100:
+            self.intake_height += 1
+        elif not self.raise and self.intake_height > 0:
+            self.intake_height -= 1
