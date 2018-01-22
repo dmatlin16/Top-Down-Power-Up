@@ -1,4 +1,4 @@
-from barrier import BarrierLine, BarrierCircle
+from barrier import Barrier
 
 class Cube:
     # Constants

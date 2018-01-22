@@ -1,5 +1,5 @@
 from robot import Robot
-from barrier import BarrierLine, BarrierCircle
+from barrier import Barrier
 from cube import Cube
 
 def setup():
@@ -14,26 +14,25 @@ def setup():
     # Used in scaling game
     game_y = displayWidth * 9.0 / 16.0
     scale_factor = displayWidth / 3840.0
-
-    red_robot = Robot(Robot.RED, 100, 100, 99, 84)
-    blue_robot = Robot(Robot.BLUE, 1820, 880, 99, 84, PI)
+    
+    red_robot = Robot(Robot.RED, 900, 400, 99, 84)
+    blue_robot = Robot(Robot.BLUE, 1020, 480, 99, 84, PI)
     cube = Cube()
-
+    
     barriers = set()
-    barriers.add(BarrierLine(0, 0, 1920, 0))
-    barriers.add(BarrierLine(1920, 0, 1920, 953))
-    barriers.add(BarrierLine(1920, 953, 0, 953))
-    barriers.add(BarrierLine(0, 953, 0, 0))
-    barriers.add(BarrierLine(0, 86, 104, 0))
-    barriers.add(BarrierLine(1816, 0, 1920, 86))
-    barriers.add(BarrierLine(0, 867, 104, 953))
-    barriers.add(BarrierLine(1816, 953, 1920, 867))
-    barriers.add(BarrierCircle(200, 200, 3, True))
+    barriers.add(Barrier(0, 0, 1920, 0))
+    barriers.add(Barrier(1920, 0, 1920, 953))
+    barriers.add(Barrier(1920, 953, 0, 953))
+    barriers.add(Barrier(0, 953, 0, 0))
+    barriers.add(Barrier(0, 86, 104, 0))
+    barriers.add(Barrier(1816, 0, 1920, 86))
+    barriers.add(Barrier(0, 867, 104, 953))
+    barriers.add(Barrier(1816, 953, 1920, 867))
 
     robots = set()
     robots.add(red_robot)
     robots.add(blue_robot)
-
+    
     field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-3840x2160.png")
     field.resize(displayWidth, int(scale_factor * field.height))
     image(field, 0, 0)
@@ -70,6 +69,8 @@ def setup():
         scale_imgs[img].resize(displayWidth, int(scale_factor * field.height))
 
 def draw():
+    background(0)
+    
     # Draw the field
     translate(0, int((displayHeight - game_y) / 2))
     image(field, 0, 0)
