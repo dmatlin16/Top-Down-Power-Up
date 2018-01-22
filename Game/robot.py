@@ -9,12 +9,6 @@ class Robot:
     RED = color(237, 28, 36)
     BLUE = color(1, 145, 255)
 
-    # States
-    accel = False
-    decel = False
-    turn_l = False
-    turn_r = False
-
     def __init__(self, color = RED, x = 0.0, y = 0.0, w = 98, h = 83, angle = 0, speed = 0):
         """Initiates the instance of Robot.
         Will create a red robot at [0, 0] with a width of 33 inches and a height of 28 inches (max robot dimensions) that is unmoving
@@ -24,14 +18,22 @@ class Robot:
         self.color = color
         self.w = w
         self.h = h
+        self.accel = False
+        self.decel = False
+        self.turn_l = False
+        self.turn_r = False
         self.speed = 0
         self.angle = angle
         self.has_cube = False
+        self.raise = False
+        self.lower = False
+        self.cube_height = 0
         
     def draw(self, barriers, robots):
         """Draws the instance of Robot"""
         pushMatrix() # Save the empty transform matrix in the stack so that it can be restored for next Robot instance 
         self.move_robot()
+        self.raise_cube()
 
         fill(self.color)
         stroke(0)
@@ -63,7 +65,13 @@ class Robot:
         rotate(self.angle)
         
         rect(-self.w/2, -self.h/2, self.w, self.h, 3)
-        ellipse(25, 0, 11, 11)
+        rectMode(CENTER)
+        if self.has_cube:
+            fill(Cube.COLOR)
+        else:
+            fill(self.color)
+        rect(20, 0, 39 + self.cube_height / 10, 39 + self.cube_height / 10)
+        rectMode(CORNER)
 
         popMatrix() # Restores reference frame to empty transform matrix by popping modified matrix off the stack
 
@@ -148,7 +156,7 @@ class Robot:
         return Barrier(c[0][0], c[0][1], c[1][0], c[1][1])
     
     def intake(self, cubes):
-        if not self.has_cube:
+        if not self.has_cube and self.cube_height == 0:
             for cube in cubes:
                 for edge in cube.get_lines():
                     if self.intake_colliding(edge):
@@ -159,3 +167,16 @@ class Robot:
             intake_edge = self.get_intake()
             cubes.add(Cube(intake_edge.get_mid()[0] + 39 / 2 * cos(self.angle), intake_edge.get_mid()[1] + 39 / 2* sin(self.angle), angle = self.angle, speed = self.speed))
             self.has_cube = False
+            self.raise = False
+    
+    def elevator(self):
+        if self.raise:
+            self.raise = False
+        else:
+            self.raise = True
+    
+    def raise_cube(self):
+        if self.raise and self.cube_height < 100:
+            self.cube_height += 1
+        elif not self.raise and self.cube_height > 0:
+            self.cube_height -= 1
