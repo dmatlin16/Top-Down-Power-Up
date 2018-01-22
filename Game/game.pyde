@@ -52,9 +52,21 @@ def setup():
                    "lights-blue-top-right" : loadImage(switch_img_path + "/lights-blue-top-right.png"),
                    "lights-red-top-left" : loadImage(switch_img_path + "/lights-red-top-left.png"),
                    "lights-red-top-right" : loadImage(switch_img_path + "/lights-red-top-right.png")}
+    
+    scale_img_path = "../Assets/Images/Field/Scale Variants"
+    scale_imgs = {"balanced" : loadImage(scale_img_path + "/balanced.png"),
+                  "bottom-tilt-1" : loadImage(scale_img_path + "/bottom-tilt-1.png"),
+                  "bottom-tilt-2" : loadImage(scale_img_path + "/bottom-tilt-2.png"),
+                  "top-tilt-1" : loadImage(scale_img_path + "/top-tilt-1.png"),
+                  "top-tilt-2" : loadImage(scale_img_path + "/top-tilt-2.png"),
+                  "lights-blue-top" : loadImage(scale_img_path + "/lights-blue-top.png"),
+                  "lights-red-top" : loadImage(scale_img_path + "/lights-red-top.png")}
 
     for img in switch_imgs:
         switch_imgs[img].resize(displayWidth, int(scale_factor * field.height))
+    
+    for img in scale_imgs:
+        scale_imgs[img].resize(displayWidth, int(scale_factor * field.height))
 
 def draw():
     background(0)
