@@ -35,8 +35,10 @@ class Cube(Rectangle):
         #             normal_angle = self.get_normal_angle(edge)
         #         while self.is_colliding(edge):
         #             self.speed *= self.FRICTION
-        #             self.x += cos(normal_angle)
-        #             self.y += sin(normal_angle)
+        #             self.x += cos(normal_angle) / 2
+        #             self.y += sin(normal_angle) / 2
+        #             robot.x -= cos(normal_angle) / 2
+        #             robot.y -= sin(normal_angle) / 2
         
         # Puts draw functions (e.g., rect(), ellipse()) into cube's reference frame to make drawing easier
         pushMatrix() # Save the empty transform matrix in the stack so that it can be restored for next Robot instance 
