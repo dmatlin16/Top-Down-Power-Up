@@ -16,18 +16,27 @@ class Cube(Rectangle):
         self.angle = angle
         self.speed = speed
         
-    def draw(self, barriers):
+    def draw(self, barriers, robots):
         """Draws the instance of Cube"""
         self.move_cube()
         
-        # Collision detection
-        for barrier in barriers:
-            if self.is_colliding(barrier):
-                normal_angle = self.get_normal_angle(barrier)
-            while self.is_colliding(barrier):
-                self.speed *= self.FRICTION
-                self.x += cos(normal_angle)
-                self.y += sin(normal_angle)
+        # # Collision detection
+        # for barrier in barriers:
+        #     if self.is_colliding(barrier):
+        #         normal_angle = self.get_normal_angle(barrier)
+        #     while self.is_colliding(barrier):
+        #         self.speed *= self.FRICTION
+        #         self.x += cos(normal_angle)
+        #         self.y += sin(normal_angle)
+        
+        # for robot in robots:
+        #     for edge in robot.get_lines():
+        #         if self.is_colliding(edge):
+        #             normal_angle = self.get_normal_angle(edge)
+        #         while self.is_colliding(edge):
+        #             self.speed *= self.FRICTION
+        #             self.x += cos(normal_angle)
+        #             self.y += sin(normal_angle)
         
         # Puts draw functions (e.g., rect(), ellipse()) into cube's reference frame to make drawing easier
         pushMatrix() # Save the empty transform matrix in the stack so that it can be restored for next Robot instance 
