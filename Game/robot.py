@@ -112,7 +112,7 @@ class Robot(Rectangle):
             cube_x = mid_x + 19.5*cos(self.angle)
             cube_y = mid_y + 19.5*sin(self.angle)
             
-            cubes.add(Cube(cube_x, cube_y, self.angle, self.speed))
+            cubes.append(Cube(cube_x, cube_y, self.angle, self.speed))
             self.has_cube = False
             self.raise = False
     
