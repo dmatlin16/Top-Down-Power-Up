@@ -89,12 +89,12 @@ class Robot(Rectangle):
         self.x += self.speed * cos(self.angle) * (1 - 0.005 * self.intake_height)
         self.y += self.speed * sin(self.angle) * (1 - 0.005 * self.intake_height)
 
-    def intake(self, cubes):
+    def intake(self, cubes, switches):
         intake_edge = self.get_lines()[0]
         
         if not self.has_cube and self.intake_height == 0:
             for cube in cubes:
-                if cube.is_colliding(intake_edge):
+                if cube.is_colliding(intake_edge) and cube.placed == False:
                     cube.x = 1000000.0
                     cube.y = 1000000.0
                     self.has_cube = True
@@ -104,8 +104,17 @@ class Robot(Rectangle):
             mid_y = intake_edge.get_mid()[1]
             cube_x = mid_x + 19.5 * cos(self.angle)
             cube_y = mid_y + 19.5 * sin(self.angle)
+            placed = False
             
-            cubes.append(Cube(cube_x, cube_y, self.angle, self.speed))
+            for switch in switches:
+                left = switch.x - switch.w / 2
+                right = switch.x + switch.w / 2
+                top = switch.y - switch.h / 2
+                bottom = switch.y + switch.h / 2
+                if cube_x > left and cube_x < right and cube_y > top and cube_y < bottom:
+                    placed = True
+            
+            cubes.append(Cube(cube_x, cube_y, self.angle, self.speed, placed = placed))
             self.has_cube = False
             self.raise = False
     

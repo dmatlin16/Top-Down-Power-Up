@@ -7,9 +7,9 @@ class Cube(Rectangle):
     SIDE_LENGTH = 39.0
     COLOR = color(227, 251, 42)
 
-    def __init__(self, x = 100.0, y = 100.0, angle = 0.0, speed = 0.0):
+    def __init__(self, x = 100.0, y = 100.0, angle = 0.0, speed = 0.0, placed = False):
         super(Cube, self).__init__(float(x), float(y), Cube.SIDE_LENGTH, Cube.SIDE_LENGTH, angle, speed, self.COLOR)
-        self.placed = False
+        self.placed = placed
         
     def draw(self, barriers, robots):
         """Draws the instance of Cube"""
@@ -36,7 +36,10 @@ class Cube(Rectangle):
         # Puts draw functions (e.g., rect(), ellipse()) into cube's reference frame to make drawing easier
         pushMatrix() # Save the empty transform matrix in the stack so that it can be restored for next Robot instance 
         
-        fill(self.color)
+        if not self.placed:
+            fill(self.color)
+        else:
+            fill(color(0, 255, 255))
         stroke(0)
         strokeWeight(2)
         

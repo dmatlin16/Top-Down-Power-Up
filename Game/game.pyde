@@ -25,7 +25,7 @@ def setup():
     red_robot = Robot(x=100, y=100)
     blue_robot = Robot(Robot.BLUE, 1820, 880, angle=PI)
     
-    red_switch = Rectangle(100, 100, 200, 200)
+    red_switch = Rectangle(200, 200, 200, 200)
     
     switches = set()
     switches.add(red_switch)
@@ -112,15 +112,19 @@ def draw():
 
     for robot in robots:
         robot.draw(barriers, robots, cubes)
-
+    
+    for switch in switches:
+        fill(color(255, 0, 0))
+        for robot in robots:
+            if switch.is_colliding(robot):
+                fill(color(0, 255, 0))
+        rect(switch.x - switch.w / 2, switch.y - switch.h / 2, switch.w, switch.h)
+    
     for cube in cubes:
         cube.draw(barriers, robots)
 
     for barrier in barriers:
         barrier.draw()
-    
-    for switch in switches:
-            rect(switch.x, switch.y, switch.w, switch.h)
 
 def keyPressed():
     """Manages pressed keys for robot controls"""
@@ -142,9 +146,9 @@ def keyPressed():
     elif lowerKey == 'l':
         blue_robot.turn_r = True
     elif lowerKey == 'q':
-        red_robot.intake(cubes)
+        red_robot.intake(cubes, switches)
     elif lowerKey == 'u':
-        blue_robot.intake(cubes)
+        blue_robot.intake(cubes, switches)
     elif lowerKey == 'e':
         red_robot.elevator()
     elif lowerKey == 'o':
