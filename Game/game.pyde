@@ -12,21 +12,28 @@ def setup():
     scale_factor = displayWidth / 1920.0
     
     red_robot = Robot(x=100, y=100)
-    blue_robot = Robot(Robot.BLUE, 1820, 880, 99, 84, PI)
+    blue_robot = Robot(Robot.BLUE, 1820, 880, angle=PI)
     
     barriers = set()
+    # Field walls
     barriers.add(Barrier(0, 0, 1920, 0))
     barriers.add(Barrier(1920, 0, 1920, 953))
     barriers.add(Barrier(1920, 953, 0, 953))
     barriers.add(Barrier(0, 953, 0, 0))
+    
+    # Portal walls
+    barriers.add(Barrier(0, 86, 104, 0))
+    barriers.add(Barrier(1816, 0, 1920, 86))
+    barriers.add(Barrier(0, 867, 104, 953))
+    barriers.add(Barrier(1816, 953, 1920, 867))
 
     robots = set()
     robots.add(red_robot)
     robots.add(blue_robot)
     
-    cube1 = Cube()
     cubes = set()
-    cubes.add(cube1)
+    cubes.add(Cube(200, 100))
+    cubes.add(Cube(200, 200))
     
     field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-3840x2160.png")
     field.resize(displayWidth, int(displayWidth / 3840.0 * field.height))
@@ -43,9 +50,9 @@ def draw():
 
     # Draw objects
     for robot in robots:
-        robot.draw(barriers, robots)
+        robot.draw(barriers, robots, cubes)
     for cube in cubes:
-        cube.draw()
+        cube.draw(barriers)
     
     for barrier in barriers:
         barrier.draw()
@@ -76,6 +83,8 @@ def keyPressed():
         red_robot.elevator()
     elif lowerKey == 'o':
         blue_robot.elevator()
+    elif lowerKey == 'x':
+        cubes.add(Cube(100, 100))
 
 def keyReleased():
     lowerKey = str(key).lower()
