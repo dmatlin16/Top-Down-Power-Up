@@ -14,14 +14,7 @@ class Robot(Rectangle):
         """Initiates a robot instance.
         Will create a red robot at [0, 0] with a width of 33 inches and a height of 28 inches (max robot dimensions) that is unmoving
         and facing right unless otherwise specified"""
-        self.color = color
-        self.x = float(x)
-        self.y = float(y)
-        self.w = float(w)
-        self.h = float(h)
-        self.angle = float(angle)
-        self.speed = float(speed)
-        
+        super(Robot, self).__init__(x, y, w, h, angle, speed, color)
         self.accel = False
         self.decel = False
         self.turn_l = False
@@ -109,8 +102,8 @@ class Robot(Rectangle):
         elif self.has_cube:
             mid_x = intake_edge.get_mid()[0]
             mid_y = intake_edge.get_mid()[1]
-            cube_x = mid_x + 19.5*cos(self.angle)
-            cube_y = mid_y + 19.5*sin(self.angle)
+            cube_x = mid_x + 19.5 * cos(self.angle)
+            cube_y = mid_y + 19.5 * sin(self.angle)
             
             cubes.append(Cube(cube_x, cube_y, self.angle, self.speed))
             self.has_cube = False

@@ -8,13 +8,8 @@ class Cube(Rectangle):
     COLOR = color(227, 251, 42)
 
     def __init__(self, x = 100.0, y = 100.0, angle = 0.0, speed = 0.0):
-        self.color = self.COLOR
-        self.x = float(x)
-        self.y = float(y)
-        self.w = self.SIDE_LENGTH
-        self.h = self.SIDE_LENGTH
-        self.angle = angle
-        self.speed = speed
+        super(Cube, self).__init__(float(x), float(y), Cube.SIDE_LENGTH, Cube.SIDE_LENGTH, angle, speed, self.COLOR)
+        self.placed = False
         
     def draw(self, barriers, robots):
         """Draws the instance of Cube"""

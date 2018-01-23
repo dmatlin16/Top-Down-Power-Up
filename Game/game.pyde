@@ -2,11 +2,12 @@ import random
 from robot import Robot
 from barrier import Barrier
 from cube import Cube
+from rectangle import Rectangle
 
 def setup():
     """Creates global variables, draws the splash screen, manages monitor scaling, initializes game elements and variables, and loads images"""
 
-    global field, red_robot, blue_robot, barriers, robots, game_y, scale_factor, cubes, portal_count, switch_imgs, scale_imgs, switch_top_color, scale_top_color, scale_status, switch_red_status, switch_blue_status, tilt_img_dict
+    global field, red_robot, blue_robot, barriers, robots, game_y, scale_factor, cubes, portal_count, switch_imgs, scale_imgs, switch_top_color, scale_top_color, scale_status, switch_red_status, switch_blue_status, tilt_img_dict, red_switch, switches
 
     # Set background and draw splash screen
     background(0)
@@ -23,6 +24,11 @@ def setup():
     # Create robots
     red_robot = Robot(x=100, y=100)
     blue_robot = Robot(Robot.BLUE, 1820, 880, angle=PI)
+    
+    red_switch = Rectangle(100, 100, 200, 200)
+    
+    switches = set()
+    switches.add(red_switch)
 
     robots = set()
     robots.add(red_robot)
@@ -112,6 +118,9 @@ def draw():
 
     for barrier in barriers:
         barrier.draw()
+    
+    for switch in switches:
+            rect(switch.x, switch.y, switch.w, switch.h)
 
 def keyPressed():
     """Manages pressed keys for robot controls"""

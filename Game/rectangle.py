@@ -1,6 +1,15 @@
 from barrier import Barrier
 
-class Rectangle:
+class Rectangle(object):
+    def __init__(self, x, y, w, h, angle = 0.0, speed = 0.0, color = None):
+        self.color = color
+        self.x = float(x)
+        self.y = float(y)
+        self.w = float(w)
+        self.h = float(h)
+        self.angle = float(angle)
+        self.speed = float(speed)
+
     def get_corners(self):
         """Returns rectangle corners as a list of 4 tuples"""
         w = self.w
@@ -21,7 +30,7 @@ class Rectangle:
         return [(x + dx1, y + dy1), (x + dx2, y + dy2), (x - dx1, y - dy1), (x - dx2, y - dy2)]
     
     def get_lines(self):
-        """Returns edges of robot as a list of 4 barriers"""
+        """Returns edges of rectangle as a list of 4 barriers"""
         c = self.get_corners()
         return [Barrier(c[0][0], c[0][1], c[1][0], c[1][1]),
                 Barrier(c[1][0], c[1][1], c[2][0], c[2][1]),
