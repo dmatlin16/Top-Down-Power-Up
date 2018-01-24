@@ -93,7 +93,7 @@ class Robot(Rectangle):
         intake_edge = self.get_lines()[0]
         
         if not self.has_cube and self.intake_height == 0:
-            for cube in cubes:
+            for cube in list(reversed(cubes)):
                 if cube.is_colliding(intake_edge) and cube.placed == False:
                     cube.x = 1000000.0
                     cube.y = 1000000.0
