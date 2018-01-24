@@ -14,14 +14,7 @@ class Robot(Rectangle):
         """Initiates a robot instance.
         Will create a red robot at [0, 0] with a width of 33 inches and a height of 28 inches (max robot dimensions) that is unmoving
         and facing right unless otherwise specified"""
-        self.color = color
-        self.x = float(x)
-        self.y = float(y)
-        self.w = float(w)
-        self.h = float(h)
-        self.angle = float(angle)
-        self.speed = float(speed)
-        
+        super(Robot, self).__init__(x, y, w, h, angle, speed, color)
         self.accel = False
         self.decel = False
         self.turn_l = False
@@ -96,12 +89,12 @@ class Robot(Rectangle):
         self.x += self.speed * cos(self.angle) * (1 - 0.005 * self.intake_height)
         self.y += self.speed * sin(self.angle) * (1 - 0.005 * self.intake_height)
 
-    def intake(self, cubes):
+    def intake(self, cubes, plates):
         intake_edge = self.get_lines()[0]
         
         if not self.has_cube and self.intake_height == 0:
             for cube in cubes:
-                if cube.is_colliding(intake_edge):
+                if cube.is_colliding(intake_edge) and cube.placed == False:
                     cube.x = 1000000.0
                     cube.y = 1000000.0
                     self.has_cube = True
@@ -109,12 +102,29 @@ class Robot(Rectangle):
         elif self.has_cube:
             mid_x = intake_edge.get_mid()[0]
             mid_y = intake_edge.get_mid()[1]
-            cube_x = mid_x + 19.5*cos(self.angle)
-            cube_y = mid_y + 19.5*sin(self.angle)
-            
-            cubes.append(Cube(cube_x, cube_y, self.angle, self.speed))
-            self.has_cube = False
-            self.raise = False
+            cube_x = mid_x + 19.5 * cos(self.angle)
+            cube_y = mid_y + 19.5 * sin(self.angle)
+            placed = False
+            for plate in plates:
+                left = plate.x - plate.w / 2
+                right = plate.x + plate.w / 2
+                top = plate.y - plate.h / 2
+                bottom = plate.y + plate.h / 2
+                space = Cube.SIDE_LENGTH / 2
+                if cube_x > left and cube_x < right and cube_y > top and cube_y < bottom:
+                    placed = True
+                    if cube_x - left < space:
+                        cube_x = left + space
+                    if right - cube_x < space:
+                        cube_x = right - space
+                    if cube_y - top < space:
+                        cube_y = top + space
+                    if bottom - cube_y < space:
+                        cube_y = bottom - space
+            if self.has_cube:
+                cubes.append(Cube(cube_x, cube_y, self.angle, self.speed, placed = placed))
+                self.has_cube = False
+                self.raise = False
     
     def elevator(self):
         self.raise = not self.raise

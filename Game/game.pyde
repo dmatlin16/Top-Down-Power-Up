@@ -2,11 +2,12 @@ import random
 from robot import Robot
 from barrier import Barrier
 from cube import Cube
+from rectangle import Rectangle
 
 def setup():
     """Creates global variables, draws the splash screen, manages monitor scaling, initializes game elements and variables, and loads images"""
 
-    global field, red_robot, blue_robot, barriers, robots, game_y, scale_factor, cubes, portal_count, switch_imgs, scale_imgs, switch_top_color, scale_top_color, scale_status, switch_red_status, switch_blue_status, tilt_img_dict
+    global field, barriers, red_robot, blue_robot, robots, game_y, scale_factor, cubes, portal_count, switch_imgs, scale_imgs, switch_top_color, scale_top_color, scale_status, switch_red_status, switch_blue_status, tilt_img_dict, plates
 
     # Set background and draw splash screen
     background(0)
@@ -21,13 +22,27 @@ def setup():
     scale_factor = displayWidth / 1920.0
 
     # Create robots
-    red_robot = Robot(x=100, y=100)
-    blue_robot = Robot(Robot.BLUE, 1820, 880, angle=PI)
-
+    red_robot = Robot(x = 100, y = 100)
+    blue_robot = Robot(Robot.BLUE, 1820, 880, angle = PI)
     robots = set()
     robots.add(red_robot)
     robots.add(blue_robot)
-
+    
+    # Create plates
+    red_switch_top = Rectangle(496.5, 316.5, 145, 109)    
+    red_switch_bottom = Rectangle(496.5, 637.5, 145, 109)
+    blue_switch_top = Rectangle(1421.5, 316.5, 145, 109)
+    blue_switch_bottom = Rectangle(1421.5, 637.5, 145, 109)
+    scale_top = Rectangle(960, 263, 144, 110)
+    scale_bottom = Rectangle(960, 690, 144, 108)
+    plates = set()
+    plates.add(red_switch_top)
+    plates.add(red_switch_bottom)
+    plates.add(blue_switch_top)
+    plates.add(blue_switch_bottom)
+    plates.add(scale_top)
+    plates.add(scale_bottom)
+    
     # Create barriers
     barriers = set()
     barrier_regions = {"field_walls": [(0, 0, 1920, 0), (1920, 0, 1920, 953), (1920, 953, 0, 953), (0, 953, 0, 0)],
@@ -103,15 +118,22 @@ def draw():
     image(scale_imgs[tilt_img_dict[scale_status]], 960, 476.5)
 
     imageMode(CORNER)
-
-    for robot in robots:
-        robot.draw(barriers, robots, cubes)
-
+    
+    # for plate in plates:
+    #     fill(color(255, 0, 0))
+    #     for robot in robots:
+    #         if plate.is_colliding(robot):
+    #             fill(color(0, 255, 0))
+    #     rect(plate.x - plate.w / 2, plate.y - plate.h / 2, plate.w, plate.h)
+    
     for cube in cubes:
         cube.draw(barriers, robots)
 
     for barrier in barriers:
         barrier.draw()
+    
+    for robot in robots:
+        robot.draw(barriers, robots, cubes)
 
 def keyPressed():
     """Manages pressed keys for robot controls"""
@@ -133,9 +155,9 @@ def keyPressed():
     elif lowerKey == 'l':
         blue_robot.turn_r = True
     elif lowerKey == 'q':
-        red_robot.intake(cubes)
+        red_robot.intake(cubes, plates)
     elif lowerKey == 'u':
-        blue_robot.intake(cubes)
+        blue_robot.intake(cubes, plates)
     elif lowerKey == 'e':
         red_robot.elevator()
     elif lowerKey == 'o':
