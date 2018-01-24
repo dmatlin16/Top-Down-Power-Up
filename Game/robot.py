@@ -89,7 +89,7 @@ class Robot(Rectangle):
         self.x += self.speed * cos(self.angle) * (1 - 0.005 * self.intake_height)
         self.y += self.speed * sin(self.angle) * (1 - 0.005 * self.intake_height)
 
-    def intake(self, cubes, switches):
+    def intake(self, cubes, plates):
         intake_edge = self.get_lines()[0]
         
         if not self.has_cube and self.intake_height == 0:
@@ -105,18 +105,26 @@ class Robot(Rectangle):
             cube_x = mid_x + 19.5 * cos(self.angle)
             cube_y = mid_y + 19.5 * sin(self.angle)
             placed = False
-            
-            for switch in switches:
-                left = switch.x - switch.w / 2
-                right = switch.x + switch.w / 2
-                top = switch.y - switch.h / 2
-                bottom = switch.y + switch.h / 2
+            for plate in plates:
+                left = plate.x - plate.w / 2
+                right = plate.x + plate.w / 2
+                top = plate.y - plate.h / 2
+                bottom = plate.y + plate.h / 2
+                space = Cube.SIDE_LENGTH / 2
                 if cube_x > left and cube_x < right and cube_y > top and cube_y < bottom:
                     placed = True
-            
-            cubes.append(Cube(cube_x, cube_y, self.angle, self.speed, placed = placed))
-            self.has_cube = False
-            self.raise = False
+                    if cube_x - left < space:
+                        cube_x = left + space
+                    if right - cube_x < space:
+                        cube_x = right - space
+                    if cube_y - top < space:
+                        cube_y = top + space
+                    if bottom - cube_y < space:
+                        cube_y = bottom - space
+            if self.has_cube:
+                cubes.append(Cube(cube_x, cube_y, self.angle, self.speed, placed = placed))
+                self.has_cube = False
+                self.raise = False
     
     def elevator(self):
         self.raise = not self.raise
