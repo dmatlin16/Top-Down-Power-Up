@@ -1,12 +1,14 @@
 class Barrier:
-    def __init__(self, x1, y1, x2, y2):
+    def __init__(self, x1, y1, x2, y2, is_visible = False):
         self.x1 = float(x1)
         self.y1 = float(y1)
         self.x2 = float(x2)
         self.y2 = float(y2)
+        self.is_visible = is_visible
     
     def draw(self):
-        line(self.x1, self.y1, self.x2, self.y2)
+        if self.is_visible:
+            line(self.x1, self.y1, self.x2, self.y2)
     
     def is_colliding(self, barrier):
         x1 = self.x1
