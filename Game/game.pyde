@@ -7,7 +7,7 @@ from rectangle import Rectangle
 def setup():
     """Creates global variables, draws the splash screen, manages monitor scaling, initializes game elements and variables, and loads images"""
 
-    global field, barriers, red_robot, blue_robot, robots, game_y, scale_factor, cubes, portal_count, switch_imgs, scale_imgs, switch_top_color, scale_top_color, scale_status, switch_red_status, switch_blue_status, tilt_img_dict, plates
+    global field, barriers, red_robot, blue_robot, robots, game_y, scale_factor, cubes, portal_count, switch_imgs, scale_imgs, switch_top_color, scale_top_color, scale_status, switch_red_status, switch_blue_status, tilt_img_dict, plates, scale_top, scale_bottom
 
     # Set background and draw splash screen
     background(0)
@@ -114,11 +114,9 @@ def draw():
 
     image(switch_imgs["lights-" + switch_top_color + "-top"], 496, 476.5)
     image(switch_imgs["lights-" + switch_top_color + "-top"], 1421, 476.5)
-    image(scale_imgs["lights-" + scale_top_color + "-top"], 960, 476.5)
 
     image(switch_imgs[tilt_img_dict[switch_red_status]], 496, 476.5)
     image(switch_imgs[tilt_img_dict[switch_blue_status]], 1421, 476.5)
-    image(scale_imgs[tilt_img_dict[scale_status]], 960, 476.5)
 
     imageMode(CORNER)
     
@@ -130,13 +128,23 @@ def draw():
     #     rect(plate.x - plate.w / 2, plate.y - plate.h / 2, plate.w, plate.h)
     
     for cube in cubes:
-        cube.draw(barriers, robots)
+        if not cube.placed:
+            cube.draw()
 
     for barrier in barriers:
         barrier.draw()
     
     for robot in robots:
-        robot.draw(barriers, robots, cubes)
+        robot.draw(barriers, robots, cubes, scale_top, scale_bottom)
+        
+    imageMode(CENTER)
+    image(scale_imgs["lights-" + scale_top_color + "-top"], 960, 476.5)
+    image(scale_imgs[tilt_img_dict[scale_status]], 960, 476.5)
+    imageMode(CORNER)
+    
+    for cube in cubes:
+        if cube.placed:
+            cube.draw()
 
 def keyPressed():
     """Manages pressed keys for robot controls"""

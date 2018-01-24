@@ -24,7 +24,7 @@ class Robot(Rectangle):
         self.lower = False
         self.intake_height = 0
         
-    def draw(self, barriers, robots, cubes):
+    def draw(self, barriers, robots, cubes, scale_top, scale_bottom):
         """Draws the instance of Robot"""
         self.move_robot()
         self.move_intake()
@@ -38,6 +38,15 @@ class Robot(Rectangle):
                 self.x += cos(normal_angle)
                 self.y += sin(normal_angle)
 
+        for plate in (scale_top, scale_bottom):
+            for edge in plate.get_lines():
+                if self.intake_height > 0 and self.is_colliding(edge):
+                    normal_angle = self.get_normal_angle(edge)
+                while self.intake_height > 0 and self.is_colliding(edge):
+                    self.speed *= self.FRICTION
+                    self.x += cos(normal_angle)
+                    self.y += sin(normal_angle)
+        
         for robot in robots:
             if not robot is self:
                 for edge in robot.get_lines():

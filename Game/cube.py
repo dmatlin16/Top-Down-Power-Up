@@ -13,7 +13,7 @@ class Cube(Rectangle):
         super(Cube, self).__init__(float(x), float(y), Cube.SIDE_LENGTH, Cube.SIDE_LENGTH, angle, speed, self.COLOR)
         self.placed = placed
         
-    def draw(self, barriers, robots):
+    def draw(self):
         """Draws the instance of Cube"""
         self.move_cube()
         
