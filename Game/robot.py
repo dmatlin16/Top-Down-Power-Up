@@ -26,7 +26,7 @@ class Robot(Rectangle):
         self.intake_height = 0
         self.score = 0
         
-    def draw(self, barriers, robots, cubes, scale_top, scale_bottom):
+    def draw(self, barriers, robots, cubes, scale_plates):
         """Draws the instance of Robot"""
         self.move_robot()
         self.move_intake()
@@ -40,7 +40,7 @@ class Robot(Rectangle):
                 self.x += cos(normal_angle)
                 self.y += sin(normal_angle)
 
-        for plate in (scale_top, scale_bottom):
+        for plate in scale_plates:
             for edge in plate.get_lines():
                 if self.intake_height > 0 and self.is_colliding(edge):
                     normal_angle = self.get_normal_angle(edge)
@@ -81,6 +81,15 @@ class Robot(Rectangle):
             fill(self.color)
         rect(20, 0, 39 + self.intake_height / 10, 39 + self.intake_height / 10)
         rectMode(CORNER)
+        
+        # Render intake height indicator light
+        if self.intake_height == 0:
+            fill(color(0))
+        elif self.intake_height == 100:
+            fill(color(255))
+        else:
+            fill(self.color)
+        ellipse(-30, 0, 10, 10)
 
         popMatrix() # Restores reference frame to empty transform matrix by popping modified matrix off the stack
 
@@ -100,7 +109,7 @@ class Robot(Rectangle):
         self.x += self.speed * cos(self.angle) * (1 - 0.005 * self.intake_height)
         self.y += self.speed * sin(self.angle) * (1 - 0.005 * self.intake_height)
 
-    def intake(self, cubes, plates):
+    def intake(self, cubes, plates, scale_plates, robots):
         intake_edge = self.get_lines()[0]
         
         if not self.has_cube and self.intake_height == 0:
@@ -109,7 +118,12 @@ class Robot(Rectangle):
                     cube.x = 1000000.0
                     cube.y = 1000000.0
                     self.has_cube = True
+                    if (self.color == self.RED and cube.side == "blue") or (self.color == self.BLUE and cube.side == "red"):
+                        for robot in robots:
+                            if not robot is self:
+                                robot.score += 5
                     break
+        
         elif self.has_cube:
             mid_x = intake_edge.get_mid()[0]
             mid_y = intake_edge.get_mid()[1]
@@ -123,7 +137,6 @@ class Robot(Rectangle):
                 bottom = plate.y + plate.h / 2
                 space = Cube.SIDE_LENGTH / 2
                 if cube_x > left and cube_x < right and cube_y > top and cube_y < bottom:
-                    placed = True
                     if cube_x - left < space:
                         cube_x = left + space
                     if right - cube_x < space:
@@ -132,10 +145,17 @@ class Robot(Rectangle):
                         cube_y = top + space
                     if bottom - cube_y < space:
                         cube_y = bottom - space
-            if self.has_cube:
-                cubes.append(Cube(cube_x, cube_y, self.angle, self.speed, placed = placed))
-                self.has_cube = False
-                self.raise = False
+                    
+                    if plate in scale_plates and self.intake_height < 100:
+                        placed = False
+                    else:
+                        placed = True
+                        center_y = 476.5
+                        plate.mass += abs((center_y - cube_y) / 160.0)
+                        
+            cubes.append(Cube(cube_x, cube_y, self.angle, self.speed, placed = placed))
+            self.has_cube = False
+            self.raise = False
     
     def elevator(self):
         self.raise = not self.raise
