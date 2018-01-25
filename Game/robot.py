@@ -1,3 +1,4 @@
+import random
 from barrier import Barrier
 from cube import Cube
 from rectangle import Rectangle
@@ -145,32 +146,36 @@ class Robot(Rectangle):
         elif not self.raise and self.intake_height > 0:
             self.intake_height -= 1
     
-    def portal(self, portal_count):
+    def portal(self, portal_count, cubes):
         y = self.y
         top_y = 43.0
         bottom_y = 910.0
+        
+        rand_angle = random.uniform(-PI/12, PI/12)
+        rand_speed = random.uniform(0, 2)
         
         if self.color == self.RED:
             # If closer to top portal, try to spawn cube in upper right
             if abs(y - top_y) < abs(y - bottom_y):
                 if portal_count["red"]["top"] > 0:
                     portal_count["red"]["top"] -= 1
-                    cubes.append(Cube(1854, 59, 0.691))
+                    cubes.append(Cube(1854, 59, 2.262 + rand_angle, rand_speed))
+
             # Otherwise, try to spawn cube in lower right
             else:
                 if portal_count["red"]["bottom"] > 0:
                     portal_count["red"]["bottom"] -= 1
-                    cubes.append(Cube(1854, 894, -0.691))
+                    cubes.append(Cube(1854, 894, -2.262 + rand_angle, rand_speed))
         
         elif self.color == self.BLUE:
             # If closer to top portal, try to spawn cube in upper left
             if abs(y - top_y) < abs(y - bottom_y):
                 if portal_count["blue"]["top"] > 0:
                     portal_count["blue"]["top"] -= 1
-                    cubes.append(Cube(66, 59, -0.691))
+                    cubes.append(Cube(66, 59, 0.880 + rand_angle, rand_speed))
             # Otherwise, try to drop a cube in the lower left
             else:
                 if portal_count["blue"]["bottom"] > 0:
                     portal_count["blue"]["bottom"] -= 1
                     # spawn lower left
-                    cubes.append(Cube(66, 894, 0.691))
+                    cubes.append(Cube(66, 894, -0.880 + rand_angle, rand_speed))

@@ -22,8 +22,8 @@ def setup():
     scale_factor = displayWidth / 1920.0
 
     # Create robots
-    red_robot = Robot(x = 100, y = 100)
-    blue_robot = Robot(Robot.BLUE, 1820, 880, angle = PI)
+    red_robot = Robot(x = 54, y = 488)
+    blue_robot = Robot(Robot.BLUE, 1867, 467, angle = PI)
     robots = set()
     robots.add(red_robot)
     robots.add(blue_robot)
@@ -150,12 +150,19 @@ def draw():
     text(blue_robot.score, 1282, 1015)
     
     # Display match time
+    
     if in_match:
+        fill(color(63, 158, 73))
+        delta_x = int(match_time / 150.0 * 444.0)
+        rect(738, 957, 444 - delta_x, 64)
+        fill(color(0))
+    
         textSize(36)
         if in_auto:
             text(match_time - 135, 959, 987)
         else:
             text(match_time, 959, 987)
+    
     else:
         textSize(30)
         text("Press 'g' to start", 959, 987)
@@ -215,9 +222,11 @@ def keyPressed():
         elif lowerKey == 'o':
             blue_robot.elevator()
         elif lowerKey == 'x':
-            red_robot.portal(portal_count)
+            if not in_auto:
+                red_robot.portal(portal_count, cubes)
         elif lowerKey == 'm':
-            blue_robot.portal(portal_count)
+            if not in_auto:
+                blue_robot.portal(portal_count, cubes)
     
 def keyReleased():
     """Manages released keys for robot controls"""
