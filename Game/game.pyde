@@ -7,7 +7,7 @@ from rectangle import Rectangle
 def setup():
     """Creates global variables, draws the splash screen, manages monitor scaling, initializes game elements and variables, and loads images"""
 
-    global field, barriers, red_robot, blue_robot, robots, game_y, scale_factor, cubes, portal_count, switch_imgs, scale_imgs, switch_top_color, scale_top_color, scale_status, switch_red_status, switch_blue_status, tilt_img_dict, plates, scale_top, scale_bottom
+    global field, barriers, red_robot, blue_robot, robots, game_y, scale_factor, cubes, portal_count, switch_imgs, scale_imgs, switch_top_color, scale_top_color, scale_status, switch_red_status, switch_blue_status, tilt_img_dict, plates, scale_top, scale_bottom, start_time, match_time, in_match
 
     # Set background and draw splash screen
     background(0)
@@ -16,7 +16,7 @@ def setup():
     text("TOP-DOWN FIRST POWER UP\nLoading assets", displayWidth // 2, displayHeight // 2)
 
     fullScreen()
-
+    
     # Used in scaling game
     game_y = displayWidth * 9.0 / 16.0
     scale_factor = displayWidth / 1920.0
@@ -70,9 +70,9 @@ def setup():
     portal_count = {"red": {"top": 7, "bottom": 7}, "blue": {"top": 7, "bottom": 7}}
     
     # Resize field to monitor size
-    field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-3840x2160.png")
-    # field.resize(displayWidth, int(displayWidth / 3840.0 * field.height))
-    field.resize(1920, int(field.height / 2))
+    field = loadImage("field.png")
+    # field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-3840x2160.png")
+    # field.resize(1920, int(field.height * 2/ 2))
 
     # Create random switch and scale sides
     switch_top_color = random.choice(["red", "blue"])
@@ -97,8 +97,15 @@ def setup():
 
         # Load scale image of that variant
         scale_imgs[variant] = loadImage("../Assets/Images/Field/Scale Variants/" + variant + ".png")
-
+    
+    # Instantiate timer variables
+    start_time = 0
+    match_time = 0
+    in_match = False
+    in_auto = False
+    
 def draw():
+    global start_time, match_time, in_match, in_auto
     """Draws the field, switches and scale, robots, cubes, and barriers if necessary"""
     # Translates everything to a vertically-centered spot (CHECK THIS!) for safe monitor scaling
     translate(0, int((displayHeight - game_y) / 2))
@@ -120,12 +127,38 @@ def draw():
 
     imageMode(CORNER)
     
-    # for plate in plates:
-    #     fill(color(255, 0, 0))
-    #     for robot in robots:
-    #         if plate.is_colliding(robot):
-    #             fill(color(0, 255, 0))
-    #     rect(plate.x - plate.w / 2, plate.y - plate.h / 2, plate.w, plate.h)
+    # Update time and score
+    if in_match and (millis() - start_time > 1000 * (151 - match_time)):
+        match_time -= 1
+        
+        if in_auto:
+            red_robot.score += 2
+            blue_robot.score += 2
+        else:
+            red_robot.score += 1
+            blue_robot.score += 1
+        
+        if match_time == 135:
+            in_auto = False
+        elif match_time == 0:
+            in_match = False  
+    
+    # Display scores
+    fill(color(0))
+    textSize(48)
+    text(red_robot.score, 637, 1015)
+    text(blue_robot.score, 1282, 1015)
+    
+    # Display match time
+    if in_match:
+        textSize(36)
+        if in_auto:
+            text(match_time - 135, 959, 987)
+        else:
+            text(match_time, 959, 987)
+    else:
+        textSize(30)
+        text("Press 'g' to start", 959, 987)
     
     for cube in cubes:
         if not cube.placed:
@@ -147,63 +180,45 @@ def draw():
             cube.draw()
 
 def keyPressed():
+    global start_time, match_time, in_match, in_auto
     """Manages pressed keys for robot controls"""
     lowerKey = str(key).lower()
-    if lowerKey == 'w':
-        red_robot.accel = True
-    elif lowerKey == 's':
-        red_robot.decel = True
-    elif lowerKey == 'a':
-        red_robot.turn_l = True
-    elif lowerKey == 'd':
-        red_robot.turn_r = True
-    elif lowerKey == 'i':
-        blue_robot.accel = True
-    elif lowerKey == 'k':
-        blue_robot.decel = True
-    elif lowerKey == 'j':
-        blue_robot.turn_l = True
-    elif lowerKey == 'l':
-        blue_robot.turn_r = True
-    elif lowerKey == 'q':
-        red_robot.intake(cubes, plates)
-    elif lowerKey == 'u':
-        blue_robot.intake(cubes, plates)
-    elif lowerKey == 'e':
-        red_robot.elevator()
-    elif lowerKey == 'o':
-        blue_robot.elevator()
-    elif lowerKey == 'x':
-        y = red_robot.y
-        top_y = 43.0
-        bottom_y = 910.0
-        # If closer to top portal, try to spawn a cube in the upper right
-        if abs(y - top_y) < abs(y - bottom_y):
-            if portal_count["red"]["top"] > 0:
-                portal_count["red"]["top"] -= 1
-                cubes.append(Cube(1854, 59, 0.691))
-        # Otherwise, try to spawn a cube in the lower right
-        else:
-            if portal_count["red"]["bottom"] > 0:
-                portal_count["red"]["bottom"] -= 1
-                cubes.append(Cube(1854, 894, -0.691))
-
-    elif lowerKey == 'm':
-        y = blue_robot.y
-        top_y = 43.0
-        bottom_y = 910.0
-        # If closer to top portal, try to drop a cube in the upper left
-        if abs(y - top_y) < abs(y - bottom_y):
-            if portal_count["blue"]["top"] > 0:
-                portal_count["blue"]["top"] -= 1
-                cubes.append(Cube(66, 59, -0.691))
-        # Otherwise, try to drop a cube in the lower left
-        else:
-            if portal_count["blue"]["bottom"] > 0:
-                portal_count["blue"]["bottom"] -= 1
-                # spawn lower left
-                cubes.append(Cube(66, 894, 0.691))
-
+    if lowerKey == 'g' and not in_match:
+        in_match = True
+        in_auto = True
+        start_time = millis()
+        match_time = 150
+    
+    if in_match:
+        if lowerKey == 'w':
+            red_robot.accel = True
+        elif lowerKey == 's':
+            red_robot.decel = True
+        elif lowerKey == 'a':
+            red_robot.turn_l = True
+        elif lowerKey == 'd':
+            red_robot.turn_r = True
+        elif lowerKey == 'i':
+            blue_robot.accel = True
+        elif lowerKey == 'k':
+            blue_robot.decel = True
+        elif lowerKey == 'j':
+            blue_robot.turn_l = True
+        elif lowerKey == 'l':
+            blue_robot.turn_r = True
+        elif lowerKey == 'q':
+            red_robot.intake(cubes, plates)
+        elif lowerKey == 'u':
+            blue_robot.intake(cubes, plates)
+        elif lowerKey == 'e':
+            red_robot.elevator()
+        elif lowerKey == 'o':
+            blue_robot.elevator()
+        elif lowerKey == 'x':
+            red_robot.portal(portal_count)
+        elif lowerKey == 'm':
+            blue_robot.portal(portal_count)
+    
 def keyReleased():
     """Manages released keys for robot controls"""
     lowerKey = str(key).lower()
