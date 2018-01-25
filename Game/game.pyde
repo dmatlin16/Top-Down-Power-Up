@@ -248,6 +248,8 @@ def keyPressed():
     if lowerKey == 'g' and not in_match:
         in_match = True
         in_auto = True
+        red_robot.score = 0
+        blue_robot.score = 0
         start_time = millis()
         match_time = 150
     
