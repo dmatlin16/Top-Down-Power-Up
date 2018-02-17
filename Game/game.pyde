@@ -4,10 +4,47 @@ from barrier import Barrier
 from cube import Cube
 from rectangle import Rectangle
 
+def reset_field():
+    """Prepares the field at the start of every match"""
+    global red_robot, blue_robot, robots, plates, cubes, portal_count, switch_top_color, scale_top_color, scale_status, switch_red_status, switch_blue_status, in_match, in_auto, start_time, match_time
+    
+    # Create robots
+    red_robot = Robot(x = 54, y = 488)
+    blue_robot = Robot(Robot.BLUE, 1867, 467, angle = PI)
+    robots = set()
+    robots.add(red_robot)
+    robots.add(blue_robot)
+    
+    # Reset switch and scale plates
+    for plate in plates:
+        plate.mass = 0.0
+    
+    # Create cubes
+    cubes = []
+    cube_regions = {"red_platform_zone": [(599, 685), (599, 603), (599, 519), (599, 436), (599, 352), (599, 269)],
+                    "blue_platform_zone": [(1320, 685), (1320, 603), (1320, 519), (1320, 436), (1320, 352), (1320, 269)],
+                    "red_power_cube_zone": [(394, 433), (394, 476), (394, 520), (354, 455), (354, 498), (314, 476), (394, 455), (394, 498), (354, 476), (394, 476)],
+                    "blue_power_cube_zone": [(1525, 433), (1525, 477), (1525, 520), (1565, 455), (1565, 498), (1605, 477), (1525, 455), (1525, 498), (1565, 477), (1525, 477)]}
+
+    for region in cube_regions.values():
+        for cube in region:
+            cubes.append(Cube(cube[0], cube[1]))
+
+    # Keep track of how many cubes are in each portal
+    portal_count = {"red": {"top": 7, "bottom": 7}, "blue": {"top": 7, "bottom": 7}}
+    
+    # Create random switch and scale sides
+    switch_top_color = random.choice(["red", "blue"])
+    scale_top_color = random.choice(["red", "blue"])
+
+    # Instantiate status variables for switches and scale
+    scale_status = 0
+    switch_red_status = 0
+    switch_blue_status = 0
+
 def setup():
     """Creates global variables, draws the splash screen, manages monitor scaling, initializes game elements and variables, and loads images"""
-
-    global field, barriers, red_robot, blue_robot, robots, game_y, scale_factor, cubes, portal_count, switch_imgs, scale_imgs, switch_top_color, scale_top_color, scale_status, switch_red_status, switch_blue_status, tilt_img_dict, plates, switch_red_top, switch_red_bottom, switch_blue_top, switch_blue_bottom, scale_top, scale_bottom, scale_plates, start_time, match_time, in_match
+    global field, plates, barriers, game_y, scale_factor, switch_imgs, scale_imgs, tilt_img_dict, switch_red_top, switch_red_bottom, switch_blue_top, switch_blue_bottom, scale_top, scale_bottom, scale_plates, start_time, match_time, in_match, in_auto
 
     # Set background and draw splash screen
     background(0)
@@ -21,13 +58,6 @@ def setup():
     game_y = displayWidth * 9.0 / 16.0
     scale_factor = displayWidth / 1920.0
 
-    # Create robots
-    red_robot = Robot(x = 54, y = 488)
-    blue_robot = Robot(Robot.BLUE, 1867, 467, angle = PI)
-    robots = set()
-    robots.add(red_robot)
-    robots.add(blue_robot)
-    
     # Create plates
     switch_red_top = Rectangle(496.5, 316.5, 145, 109)    
     switch_red_bottom = Rectangle(496.5, 637.5, 145, 109)
@@ -44,7 +74,7 @@ def setup():
     plates.add(scale_bottom)
     for plate in plates:
         plate.mass = 0.0
-        
+    
     scale_plates = set()
     scale_plates.add(scale_top)
     scale_plates.add(scale_bottom)
@@ -60,38 +90,9 @@ def setup():
     for region in barrier_regions.values():
         for barrier in region:
             barriers.add(Barrier(barrier[0], barrier[1], barrier[2], barrier[3]))
-
-    # Create cubes
-    cubes = []
-    red_cube_regions = {"red_platform_zone": [(599, 685), (599, 603), (599, 519), (599, 436), (599, 352), (599, 269)],
-                        "red_power_cube_zone": [(394, 433), (394, 476), (394, 520), (354, 455), (354, 498), (314, 476), (394, 455), (394, 498), (354, 476), (394, 476)]}
-    blue_cube_regions = {"blue_platform_zone": [(1320, 685), (1320, 603), (1320, 519), (1320, 436), (1320, 352), (1320, 269)],
-                         "blue_power_cube_zone": [(1525, 433), (1525, 477), (1525, 520), (1565, 455), (1565, 498), (1605, 477), (1525, 455), (1525, 498), (1565, 477), (1525, 477)]}
-
-    for region in red_cube_regions.values():
-        for cube in region:
-            cubes.append(Cube(cube[0], cube[1], side = "red"))
-    
-    for region in blue_cube_regions.values():
-        for cube in region:
-            cubes.append(Cube(cube[0], cube[1], side = "blue"))
-
-    # Keep track of how many cubes are in each portal
-    portal_count = {"red": {"top": 7, "bottom": 7}, "blue": {"top": 7, "bottom": 7}}
     
     # Resize field to monitor size
     field = loadImage("field.png")
-    # field = loadImage("../Assets/Images/Field/Field-(No-Scale-or-Switches)-3840x2160.png")
-    # field.resize(1920, int(field.height * 2/ 2))
-
-    # Create random switch and scale sides
-    switch_top_color = random.choice(["red", "blue"])
-    scale_top_color = random.choice(["red", "blue"])
-
-    # Instantiate status variables for switches and scale
-    scale_status = 0
-    switch_red_status = 0
-    switch_blue_status = 0
 
     # This is a dictionary to help link switch and scale status to image path
     tilt_img_dict = {-2 : "top-tilt-2", -1 : "top-tilt-1", 0 : "balanced", 1 : "bottom-tilt-1", 2 : "bottom-tilt-2"}
@@ -114,6 +115,8 @@ def setup():
     in_match = False
     in_auto = False
     
+    reset_field()
+    
 def draw():
     global start_time, match_time, in_match, in_auto, switch_red_status, switch_blue_status, scale_status
     """Draws the field, switches and scale, robots, cubes, and barriers if necessary"""
@@ -127,9 +130,20 @@ def draw():
     # images for easy alignment of switches/scales with lights. Afterwards, reverts to CORNER mode.
     image(field, 0, 0)
 
+    imageMode(CENTER)
+
+    image(switch_imgs["lights-" + switch_top_color + "-top"], 496, 476.5)
+    image(switch_imgs["lights-" + switch_top_color + "-top"], 1421, 476.5)
+
+    image(switch_imgs[tilt_img_dict[switch_red_status]], 496, 476.5)
+    image(switch_imgs[tilt_img_dict[switch_blue_status]], 1421, 476.5)
+
+    imageMode(CORNER)
+    
     # Update time and score
     if in_match and (millis() - start_time > 1000 * (151 - match_time)):
         match_time -= 1
+        
         if in_auto:
             score_increment = 2
         else:
@@ -174,7 +188,6 @@ def draw():
     text(blue_robot.score, 1282, 1015)
     
     # Display match time
-    
     if in_match:
         fill(color(63, 158, 73))
         delta_x = int(match_time / 150.0 * 444.0)
@@ -263,10 +276,11 @@ def keyPressed():
     """Manages pressed keys for robot controls"""
     lowerKey = str(key).lower()
     if lowerKey == 'g' and not in_match:
+        if start_time > 0:
+            reset_field()
+        
         in_match = True
         in_auto = True
-        red_robot.score = 0
-        blue_robot.score = 0
         start_time = millis()
         match_time = 150
     
@@ -316,7 +330,6 @@ def keyReleased():
         red_robot.turn_l = False
     elif lowerKey == 'd':
         red_robot.turn_r = False
-    
     elif lowerKey == 'i':
         blue_robot.accel = False
     elif lowerKey == 'k':
