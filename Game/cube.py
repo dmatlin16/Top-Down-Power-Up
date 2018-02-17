@@ -9,9 +9,10 @@ class Cube(Rectangle):
     COLOR = color(227, 251, 42)
     PLACED_COLOR = color(224, 211, 38)
 
-    def __init__(self, x = 100.0, y = 100.0, angle = 0.0, speed = 0.0, placed = False):
+    def __init__(self, x = 100.0, y = 100.0, angle = 0.0, speed = 0.0, placed = False, side = "none"):
         super(Cube, self).__init__(float(x), float(y), Cube.SIDE_LENGTH, Cube.SIDE_LENGTH, angle, speed, self.COLOR)
         self.placed = placed
+        self.side = side
         
     def draw(self):
         """Draws the instance of Cube"""
