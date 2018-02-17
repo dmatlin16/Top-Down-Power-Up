@@ -148,7 +148,24 @@ def draw():
         if match_time == 135:
             in_auto = False
         elif match_time == 0:
-            in_match = False  
+            # Give parking and climbing points
+            if red_robot.climb_height == 100:
+                red_robot.score += 30
+            else:
+                x = red_robot.x
+                y = red_robot.y
+                if 812 < x and x < 935 and 322 < y and y < 631:
+                    red_robot.score += 5
+                    
+            if blue_robot.climb_height == 100:
+                blue_robot.score += 30
+            else:
+                x = blue_robot.x
+                y = blue_robot.y
+                if 631 < x and x < 1107 and 322 < y and y < 631:
+                    blue_robot.score += 5
+            
+            in_match = False
     
     # Display scores
     fill(color(0))
@@ -262,6 +279,15 @@ def keyPressed():
             red_robot.turn_l = True
         elif lowerKey == 'd':
             red_robot.turn_r = True
+        elif lowerKey == 'q':
+            red_robot.intake(cubes, plates, scale_plates, robots)
+        elif lowerKey == 'e':
+            red_robot.elevator()
+        elif lowerKey == 'x':
+            red_robot.portal(portal_count, cubes, in_auto)
+        elif lowerKey == 'c':
+            red_robot.climber()
+        
         elif lowerKey == 'i':
             blue_robot.accel = True
         elif lowerKey == 'k':
@@ -270,20 +296,14 @@ def keyPressed():
             blue_robot.turn_l = True
         elif lowerKey == 'l':
             blue_robot.turn_r = True
-        elif lowerKey == 'q':
-            red_robot.intake(cubes, plates, scale_plates, robots)
         elif lowerKey == 'u':
             blue_robot.intake(cubes, plates, scale_plates, robots)
-        elif lowerKey == 'e':
-            red_robot.elevator()
         elif lowerKey == 'o':
             blue_robot.elevator()
-        elif lowerKey == 'x':
-            if not in_auto:
-                red_robot.portal(portal_count, cubes)
         elif lowerKey == 'm':
-            if not in_auto:
-                blue_robot.portal(portal_count, cubes)
+            blue_robot.portal(portal_count, cubes, in_auto)
+        elif lowerKey == 'n':
+            blue_robot.climber()
     
 def keyReleased():
     """Manages released keys for robot controls"""
@@ -296,6 +316,7 @@ def keyReleased():
         red_robot.turn_l = False
     elif lowerKey == 'd':
         red_robot.turn_r = False
+    
     elif lowerKey == 'i':
         blue_robot.accel = False
     elif lowerKey == 'k':
